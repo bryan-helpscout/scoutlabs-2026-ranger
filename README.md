@@ -8,13 +8,17 @@ The goal: AEs never have to say *"let me check and get back to you"* for anythin
 
 ## What it does
 
-Three surfaces, one brain:
+Five surfaces, one shared brain:
 
-| Surface | What it does | Behavior |
-|---|---|---|
-| **Main chat** (center) | Answers AE questions with streaming responses + source-attribution pills | Replies collapse to a 1–2 sentence lead; *Show more* expands supporting detail |
-| **Live call panel** (right) | Ingests transcript chunks via a source-agnostic webhook, surfaces cards in real-time as topics come up | 💡 Answer card on top (Q→A synthesis); raw source cards below; click-to-chat to expand |
-| **Prospect sidebar** (left) | Loads a HubSpot company's deal stage, value, owner, last activity, primary contact | Typing debounces, 60s cache, inline card under the input |
+| Surface | Route / Trigger | Who it's for | Behavior |
+|---|---|---|---|
+| **Main chat** (center) | `/` | AEs on live calls with full context | Streaming replies + source pills, collapses to 1–2 sentence lead with *Show more* |
+| **Live call panel** (right of `/`) | SSE, populated by `POST /api/transcript/ingest` | AEs on live calls | 💡 Answer card on top (Q→A synthesis); raw source cards below; click-to-chat to expand |
+| **Prospect sidebar** (left of `/`) | Typing in the input | AEs loading a specific deal | HubSpot deal stage / value / owner / last activity / primary contact — inline card, 60s cache |
+| **`/ask` page** | `/ask` | Any teammate — centered, minimal, no prospect needed | Same streaming / source pills / collapse UX as main chat; no sidebar or live panel |
+| **`/ranger` Slack slash command** | `/ranger <question>` in any channel | Everyone on Slack — zero UI | Async in-channel reply via `response_url` with a `Sources: …` footer |
+
+All five share the same system-prompt assembly (`app/lib/chat-context.ts`), so none of them can drift in what they know.
 
 ## Data sources
 
@@ -104,6 +108,7 @@ Fill in the keys. At minimum you need `ANTHROPIC_API_KEY`; the rest degrade grac
 | `LINEAR_API_KEY` | Optional | linear.app/settings/api |
 | `SLAB_MCP_URL` | Optional | Defaults to HS nonprod; only reachable on-VPN |
 | `SLAB_DISABLED` | Optional | Set to `1` if you know you'll never have VPN access — silences the "Slab unreachable" log line |
+| `SLACK_SIGNING_SECRET` | Only for `/ranger` slash command | Slack app → Basic Information → Signing Secret. Without it, `/api/slack/command` returns a configured-check message instead of processing requests. |
 
 ### 3. Run
 
@@ -134,6 +139,42 @@ Open [http://localhost:3000](http://localhost:3000).
 - Type a question, hit Enter. Replies stream in; the bubble collapses to the 1–2 sentence lead when complete with a **Show more ↓** toggle for detail.
 - Source-attribution pills appear below the reply (Slack, Slab, Linear, HubSpot, ⚔ Battle card, 👤 Reddit signals).
 - Load a prospect (sidebar, top-left) to have HubSpot context automatically merged into every reply.
+
+### `/ask` page — for teammates beyond the AE
+
+A centered, minimal chat surface at `/ask`. Same streaming, same source pills, same lead/rest collapse — no sidebar, no prospect loading, no live-call panel. Designed to be shareable: anyone on the team can bookmark `<deployed-ranger>/ask` and ask questions without a setup ritual.
+
+Auth: Ranger doesn't ship built-in auth on `/ask`. For production, the cleanest option is Vercel's **Deployment Protection** (Vercel project → Settings → Deployment Protection → Password Protection) — zero code change, protects the whole deployment. For SSO, wrap behind Cloudflare Access or similar.
+
+### `/ranger` Slack slash command
+
+`/ranger <question>` from any channel returns an in-channel answer with a `Sources: …` footer:
+
+```
+bryan: /ranger does Help Scout support SAML SSO on Okta? which plan?
+
+Ranger:
+@bryan asked: does Help Scout support SAML SSO on Okta? which plan?
+
+SAML SSO works with any SAML-compatible identity provider — including
+Okta — on Plus (as a paid add-on) and is included natively on Pro
+($75/user/month, 10-user minimum).
+
+_Sources: Slab · product facts_
+```
+
+One-time Slack app setup (admin):
+
+1. api.slack.com/apps → **Create New App → From scratch** → name: `Ranger`
+2. Features → **Slash Commands** → Create:
+   - Command: `/ranger`
+   - Request URL: `https://<deployed-ranger-url>/api/slack/command`
+   - Short description: "Ask Ranger any sales question"
+   - Usage hint: `[your question]`
+3. Basic Information → copy **Signing Secret** → set as `SLACK_SIGNING_SECRET` in your deploy env
+4. Install to Workspace
+
+The handler verifies every request's HMAC signature against `SLACK_SIGNING_SECRET`, responds within Slack's 3-second window with a "🔍 digging up an answer…" ack, then uses Next's `after()` to post the real answer to `response_url` once synthesis completes.
 
 ## Refresh pipelines
 
@@ -166,21 +207,30 @@ Ranger implements the [Help Scout Design System (HSDS)](./HelpScoutRangerDesign.
 .
 ├── app/
 │   ├── api/
-│   │   ├── chat/route.ts              Main chat — streams Anthropic responses,
-│   │   │                               injects product facts + competitor cards +
-│   │   │                               Reddit signals + HubSpot prospect context
+│   │   ├── chat/route.ts              Main chat endpoint — thin wrapper that
+│   │   │                               streams Anthropic + emits source flags
 │   │   ├── prospect/route.ts          HubSpot REST lookup (company → deal + contact)
+│   │   ├── slack/command/route.ts     /ranger slash command — HMAC verification
+│   │   │                               + after() async reply via response_url
 │   │   └── transcript/
 │   │       ├── ingest/route.ts        POST — source-agnostic webhook for transcripts
 │   │       └── stream/route.ts        GET  — SSE fanout of events per meeting
+│   ├── ask/
+│   │   ├── page.tsx                   /ask route — renders AskChat
+│   │   └── ask.module.css             Centered minimal layout
 │   ├── components/
 │   │   ├── CoPilot.tsx                Main UI — sidebar + chat + live-call-panel wrapper
 │   │   ├── CoPilot.module.css         HSDS-compliant styles
-│   │   └── LiveCallPanel.tsx          Right panel — SSE client, card rendering,
-│   │                                   click-to-chat prompt generation
+│   │   ├── LiveCallPanel.tsx          Right panel — SSE client, card rendering,
+│   │   │                               click-to-chat prompt generation
+│   │   └── AskChat.tsx                Standalone chat for /ask — no sidebar,
+│   │                                   no prospect, reuses CoPilot.module.css
 │   ├── lib/
 │   │   ├── constants.ts               SYSTEM_PROMPT, MCP config, SLACK_CHANNELS,
 │   │   │                               SONNET_MODEL / HAIKU_MODEL centralized
+│   │   ├── chat-context.ts            Shared brain — assembleChatContext() called
+│   │   │                               by /api/chat AND /api/slack/command so
+│   │   │                               they can't drift
 │   │   ├── transcript-store.ts        Per-meeting ring buffer + EventEmitter
 │   │   ├── triage.ts                  Haiku-driven triage loop: trigger → queries
 │   │   │                               → Slab/Slack/Linear/Competitor/Reddit surfaces
