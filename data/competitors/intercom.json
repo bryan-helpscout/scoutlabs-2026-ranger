@@ -1,0 +1,98 @@
+{
+  "slug": "intercom",
+  "name": "Intercom",
+  "positioning": "Position Help Scout as the predictable, human-first support platform for SMB/mid-market teams who want powerful email-based support without Intercom's complex pricing model, AI-first reorientation, and feature bloat they'll never use.",
+  "pricing": {
+    "startingAt": "$29/seat/mo + $0.99 per Fin AI outcome (billed annually)",
+    "notes": "True cost is deceptive: Essential at $29/seat looks cheap but Copilot (AI assistant) is $29/agent/mo extra, advanced analytics (Pro add-on) is $99/mo, and outbound/proactive features are $99/mo more. WhatsApp, SMS, phone, and email campaigns are all pay-as-you-go on top. Advanced plan jumps to $85/seat/mo; Expert (HIPAA, SSO, SLAs) is $132/seat/mo. Fin AI outcomes at $0.99 each add unpredictable monthly costs at scale. Help Scout Pro at $65/seat/mo includes HIPAA + SAML SSO with no per-resolution charges."
+  },
+  "keyStrengths": [
+    "Fin AI Agent is genuinely best-in-class: native integration, self-improving from human rep interactions, 42–87% self-serve resolution rates cited by customers — a real differentiator for AI-first teams",
+    "Omnichannel breadth (email, chat, phone, WhatsApp, social) in one inbox — far wider channel coverage than Help Scout today",
+    "Product engagement and onboarding suite (product tours, checklists, tooltips, behavioral messaging sequences) built-in — doubles as a customer success/lifecycle platform, not just support",
+    "350+ integrations and rich real-time user/company behavioral data (product usage, custom attributes) give deep personalization capability"
+  ],
+  "ourAdvantages": [
+    "Predictable, transparent pricing: Help Scout Standard $20, Plus $40, Pro $65/seat/mo — no per-outcome charges, no add-on maze. Intercom's true all-in cost (seat + Fin outcomes + Copilot + analytics add-on + outbound add-on) can easily exceed $150+/agent/mo for a growing team.",
+    "No ticket numbers, no robotic UX — conversations feel like email to customers, reducing friction. Intercom's chat-first interface has prompted Reddit users to flag it feels impersonal and overwhelming for teams whose customers prefer email.",
+    "SLAs and Round Robin routing coming to Plus/Pro (internal decision approved Aug 2025) — closing a key feature gap without requiring a jump to a $132/seat Expert tier like Intercom demands.",
+    "HIPAA + SAML SSO on Pro at $65/seat vs. Intercom Expert at $132/seat — roughly half the cost for compliance-sensitive teams (healthcare, fintech, edtech).",
+    "Simpler onboarding and faster time-to-value: Reddit signals consistently show Intercom users frustrated by backlog management complexity and steep learning curve when scaling a support team. Help Scout's shared inbox model gets new agents productive in hours.",
+    "15-day free trial, no credit card required. Intercom's 14-day trial includes all features but unpredictable usage charges begin at conversion — Help Scout's flat-seat model removes post-trial billing anxiety."
+  ],
+  "landmines": [
+    "Prospect needs true omnichannel (WhatsApp, SMS, phone, social in one inbox today) — Help Scout's channel coverage is narrower; don't oversell this.",
+    "Team is sold on AI-first deflection as primary strategy — if Fin's outcome-based pricing pencils out positively vs. headcount cost, Intercom's ROI story is compelling and we lack a comparable outcome-based AI agent pricing model.",
+    "Prospect requires built-in product engagement tools (in-app tours, behavioral drip campaigns, checklists) — Intercom doubles as a CES/lifecycle platform; Help Scout does not replace that.",
+    "Large enterprise with complex SLA management, multibrand, or SSO requirements already standardized on Intercom Expert — switching costs and feature parity gaps make this a tough displacement."
+  ],
+  "pivots": [
+    "If prospect says 'Intercom's Fin AI resolves 50%+ of our tickets automatically': Acknowledge Fin is a genuinely strong AI agent. Then ask: 'At $0.99 per resolved outcome, what does that math look like at your current volume? And what happens to your monthly bill if volume spikes? With Help Scout you get AI Assist included in Plus — no per-resolution billing surprises.'",
+    "If prospect says 'Intercom has everything in one platform': Ask what they're actually using — most SMB teams use 20% of Intercom's surface area and pay for 100% of it. 'Help Scout gives you shared inbox, knowledge base, and in-app Beacon in one flat-seat price. If you're not running product tours or behavioral messaging campaigns, you're paying for a platform you'll never fully use.'",
+    "If prospect says 'We need WhatsApp or phone support': Validate the requirement, then qualify scope — 'How much of your current volume is actually WhatsApp vs. email/chat? If it's under 20%, the per-conversation Intercom charges for WhatsApp can add up fast. Let's look at whether a focused email+chat tool at half the seat cost makes more sense for your core volume.'",
+    "If prospect mentions Intercom's pricing is confusing or hard to forecast: 'That's the most common thing we hear from teams evaluating Intercom — seats plus outcomes plus Copilot plus add-ons makes it hard to budget. Help Scout is one number per seat, per month. You can tell your CFO exactly what support will cost next quarter.'"
+  ],
+  "sources": [
+    {
+      "url": "https://www.intercom.com/",
+      "kind": "homepage",
+      "fetchedAt": "2026-04-21T23:32:28.259Z"
+    },
+    {
+      "url": "https://www.intercom.com/pricing",
+      "kind": "pricing",
+      "fetchedAt": "2026-04-21T23:32:28.395Z"
+    },
+    {
+      "url": "https://www.intercom.com/customer-support",
+      "kind": "features",
+      "fetchedAt": "2026-04-21T23:32:28.843Z"
+    },
+    {
+      "url": "slab://o24shjzc",
+      "kind": "slab",
+      "fetchedAt": "2026-04-21T23:32:30.142Z"
+    },
+    {
+      "url": "slab://x4yhphbv",
+      "kind": "slab",
+      "fetchedAt": "2026-04-21T23:32:30.142Z"
+    },
+    {
+      "url": "slab://j3xijt4a",
+      "kind": "slab",
+      "fetchedAt": "2026-04-21T23:32:30.142Z"
+    },
+    {
+      "url": "https://helpscout.slack.com/archives/C05EBQXNR6U/p1774356001826059?thread_ts=1774356001.826059",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:32:30.142Z"
+    },
+    {
+      "url": "https://helpscout.slack.com/archives/C0AU14LD5A9/p1776778376002429",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:32:30.142Z"
+    },
+    {
+      "url": "https://helpscout.slack.com/archives/CRF364VSA/p1758815626504659?thread_ts=1758815626.504659",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:32:30.142Z"
+    },
+    {
+      "url": "https://helpscout.slack.com/archives/C1TS3UAFQ/p1765831792677859?thread_ts=1765827868.028059",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:32:30.142Z"
+    },
+    {
+      "url": "https://helpscout.slack.com/archives/C5499KX1Q/p1776795770447399?thread_ts=1776794764.266439",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:32:30.142Z"
+    },
+    {
+      "url": "slack://reddit-signals:Intercom",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:32:30.142Z"
+    }
+  ],
+  "updatedAt": "2026-04-21T23:33:04.884Z"
+}

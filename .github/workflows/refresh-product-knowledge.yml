@@ -1,0 +1,88 @@
+name: Refresh Help Scout product fact-sheet
+
+# Scrapes helpscout.com's public sales pages, re-synthesizes the product
+# fact-sheet, opens a PR with the diff. Sales engineering reviews + merges.
+#
+# Runs weekly (Tuesday 09:00 UTC — offset from the Monday competitor refresh
+# so both PRs don't land on the same morning) and on demand.
+#
+# Required secrets:
+#   ANTHROPIC_API_KEY — mandatory; synthesis needs it.
+
+on:
+  schedule:
+    - cron: '0 9 * * 2'
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    name: Refresh and open PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Refresh product fact-sheet
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: npm run refresh-product-knowledge
+
+      - name: Summarize diff
+        run: |
+          {
+            echo "## Help Scout product fact-sheet refresh"
+            if git diff --quiet data/product/; then
+              echo
+              echo "✅ No changes."
+            else
+              echo
+              echo '```'
+              git diff --stat data/product/
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Open / update PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore: weekly Help Scout product fact-sheet refresh"
+          title: "Weekly Help Scout product fact-sheet refresh"
+          body: |
+            Auto-generated refresh of `data/product/helpscout.json` by
+            `scripts/refresh-product-knowledge.ts`.
+
+            ### What this PR does
+            Scrapes ~11 pages on helpscout.com (pricing, feature pages,
+            customers, security, SaaS industry) and re-synthesizes the
+            structured fact-sheet that's injected into every chat reply's
+            system prompt.
+
+            ### Reviewer checklist
+            - [ ] Pricing numbers match what's on helpscout.com/pricing/
+            - [ ] Feature descriptions are accurate (no invented claims)
+            - [ ] Customer proof-point metrics are traceable to customers/
+                  page or industry pages
+            - [ ] `urlsForSalesSharing` entries all resolve (no 404s)
+            - [ ] `updatedAt` bumped; meaningful content also changed
+
+            Close without merging if the fact-sheet shouldn't update this week.
+          branch: auto/refresh-product-knowledge
+          labels: |
+            product-knowledge-refresh
+            automated
+          delete-branch: true

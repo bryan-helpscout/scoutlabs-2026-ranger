@@ -1,0 +1,27 @@
+{
+  "name": "hs-sales-copilot",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "node --env-file=.env.local ./node_modules/.bin/next dev",
+    "build": "next build",
+    "start": "node --env-file=.env.local ./node_modules/.bin/next start",
+    "refresh-competitors": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/refresh-competitors.ts",
+    "refresh-product-knowledge": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/refresh-product-knowledge.ts",
+    "refresh-reddit-signals": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/refresh-reddit-signals.ts",
+    "screenshot-ui": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/screenshot-ui.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.90.0",
+    "next": "15.3.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "puppeteer-core": "^24.42.0",
+    "typescript": "^5"
+  }
+}

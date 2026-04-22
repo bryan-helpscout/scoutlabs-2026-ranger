@@ -1,0 +1,364 @@
+{
+  "summary": "Help Scout is an intuitive, affordable customer support platform that brings every support channel—email, live chat, social, and more—into one shared inbox, with AI tools that resolve 73% of interactions on average. It's built for growing teams that need real collaboration features, actionable analytics, and self-service tools without the complexity or cost of enterprise alternatives. More than 12,000 companies use Help Scout, and 80% of customers stay for 4+ years.",
+  "pricing": {
+    "tiers": [
+      {
+        "name": "Free",
+        "pricePerUser": "$0",
+        "minimum": "Up to 5 users",
+        "highlights": [
+          "5 users, 1 Inbox, 1 Docs site",
+          "100 contacts/month",
+          "10 saved replies, 10 tags, 10 articles",
+          "30-day reporting history",
+          "Basic workflows (up to 150)"
+        ]
+      },
+      {
+        "name": "Standard",
+        "pricePerUser": "$25/user/month (monthly) — 16% discount available annually",
+        "minimum": "Up to 25 users",
+        "highlights": [
+          "2 Inboxes, 2 Docs sites, unlimited contacts",
+          "Multiple knowledge bases, live chat, Instagram, and Messenger",
+          "1 basic SLA policy, basic workflows (up to 500)",
+          "AI Assist (expand, shorten, edit, translate) — unlimited",
+          "2-year reporting history, pre-built reports"
+        ]
+      },
+      {
+        "name": "Plus",
+        "pricePerUser": "$45/user/month (monthly) — 16% discount available annually",
+        "minimum": "Up to 50 users",
+        "highlights": [
+          "5 Inboxes, 3 Docs sites; WhatsApp messaging",
+          "Advanced workflows (up to 500), 2 advanced SLA policies",
+          "Unlimited AI Drafts; round-robin routing",
+          "Salesforce, Jira, and HubSpot integrations",
+          "API at 400 calls/minute; SSO/SAML and IP restrictions as add-ons"
+        ]
+      },
+      {
+        "name": "Pro",
+        "pricePerUser": "$75/user/month (monthly) — 16% discount available annually",
+        "minimum": "Minimum 10 users",
+        "highlights": [
+          "10 Inboxes, 5 Docs sites; unlimited workflows and SLA policies",
+          "SSO/SAML and HIPAA compliance included",
+          "Up to 50 light users; multiple routing types (round robin + load balanced)",
+          "Dedicated onboarding specialist and strategic account manager",
+          "API at 800 calls/minute; preferred pricing on Aircall"
+        ]
+      }
+    ],
+    "discounts": [
+      "16% discount on annual billing",
+      "Nonprofit and B Corporation discounts via the Help Scout for Good program",
+      "Startup plan available for early-stage companies",
+      "AI Answers pre-paid discounts available (up to 33% savings)"
+    ],
+    "trial": "15-day free trial on Standard and Plus plans, no credit card required. Pro plan trial available via sales team. AI Answers includes a 3-month free trial (unlimited resolutions) for all new accounts."
+  },
+  "features": [
+    {
+      "name": "Shared Inbox",
+      "description": "Centralizes email, live chat, social, and phone conversations in one collaborative workspace where teammates can assign, comment, and respond without duplicate replies. Supports multiple inboxes for different teams or products.",
+      "url": "https://www.helpscout.com/inbox/",
+      "includedIn": [
+        "Free",
+        "Standard",
+        "Plus",
+        "Pro"
+      ]
+    },
+    {
+      "name": "AI Answers (Chatbot)",
+      "description": "An autonomous AI assistant that resolves customer questions instantly using your knowledge base, website, and custom sources—averaging a 73% resolution rate. Priced at $0.75 per resolution with monthly spending caps available.",
+      "url": "https://www.helpscout.com/self-service/",
+      "includedIn": [
+        "Standard",
+        "Plus",
+        "Pro"
+      ]
+    },
+    {
+      "name": "AI Assist (Inbox Assistant)",
+      "description": "In-line AI tools that let agents expand, shorten, edit, or translate text with a single click, and summarize long conversation threads instantly. Available to all paid users at no additional charge.",
+      "url": "https://www.helpscout.com/ai-features/",
+      "includedIn": [
+        "Standard",
+        "Plus",
+        "Pro"
+      ]
+    },
+    {
+      "name": "AI Drafts",
+      "description": "Generates full reply drafts based on past conversations and help content, giving agents a ready-to-review starting point. Included as unlimited drafts on Plus and Pro.",
+      "url": "https://www.helpscout.com/ai-features/",
+      "includedIn": [
+        "Plus",
+        "Pro"
+      ]
+    },
+    {
+      "name": "Knowledge Base (Docs)",
+      "description": "A no-code, branded self-service help center that customers can search 24/7; one customer reported a 58% reduction in email volume after improving their Docs site. Supports custom CSS, article ratings, and content-gap reporting via failed searches.",
+      "url": "https://www.helpscout.com/knowledge-base/",
+      "includedIn": [
+        "Free",
+        "Standard",
+        "Plus",
+        "Pro"
+      ]
+    },
+    {
+      "name": "Beacon (Embeddable Support Hub)",
+      "description": "A customizable widget you can place anywhere on your website or in-app that surfaces help articles, live chat, and AI Answers so customers get help without leaving the page. Supports contact forms, proactive messages, and previous conversation history.",
+      "url": "https://www.helpscout.com/proactive-messages/",
+      "includedIn": [
+        "Free",
+        "Standard",
+        "Plus",
+        "Pro"
+      ]
+    },
+    {
+      "name": "Proactive Messages",
+      "description": "Sends targeted in-app or on-site messages (banners, modals, NPS surveys, standard messages) based on triggers like URL, time on page, or number of visits to engage customers at the right moment.",
+      "url": "https://www.helpscout.com/proactive-messages/",
+      "includedIn": [
+        "Standard",
+        "Plus",
+        "Pro"
+      ]
+    },
+    {
+      "name": "Workflows & Automation",
+      "description": "Rule-based automations that handle assigning, tagging, prioritizing, and replying to conversations so agents stay focused on customers rather than inbox management. Standard allows 500 workflows; Pro allows unlimited.",
+      "url": "https://www.helpscout.com/inbox/",
+      "includedIn": [
+        "Free",
+        "Standard",
+        "Plus",
+        "Pro"
+      ]
+    },
+    {
+      "name": "Reporting & Analytics",
+      "description": "Pre-built dashboards cover conversation volume, response time, handle time, team performance, CSAT, and Docs search data; custom report filters and CSV exports are available on paid plans. Standard has 2-year history; Plus and Pro have all-time history.",
+      "url": "https://www.helpscout.com/analytics/",
+      "includedIn": [
+        "Free",
+        "Standard",
+        "Plus",
+        "Pro"
+      ]
+    },
+    {
+      "name": "Service Level Agreements (SLAs)",
+      "description": "Sets and tracks response and resolution time targets across conversations to keep teams accountable to key accounts. Standard includes 1 basic policy; Plus includes 2 advanced policies; Pro includes unlimited SLA policies.",
+      "url": "https://www.helpscout.com/pricing/",
+      "includedIn": [
+        "Standard",
+        "Plus",
+        "Pro"
+      ]
+    },
+    {
+      "name": "Company Management",
+      "description": "Groups contacts and conversations by company so agents see full account history and context—not just individual threads—right in the conversation sidebar.",
+      "url": "https://www.helpscout.com/inbox/",
+      "includedIn": [
+        "Plus",
+        "Pro"
+      ]
+    },
+    {
+      "name": "SSO / SAML",
+      "description": "Allows teams to sign into Help Scout using their existing identity provider via any SAML-compatible SSO system. Available as an add-on on Plus; included natively on Pro.",
+      "url": "https://www.helpscout.com/pricing/",
+      "includedIn": [
+        "Plus (add-on)",
+        "Pro"
+      ]
+    },
+    {
+      "name": "HIPAA Compliance",
+      "description": "Help Scout maintains ongoing HIPAA compliance and can process, maintain, and store protected health information (PHI) for covered entities after a BAA is signed. Available as an add-on on Pro.",
+      "url": "https://www.helpscout.com/company/legal/security/",
+      "includedIn": [
+        "Pro (add-on)"
+      ]
+    },
+    {
+      "name": "Light User Seats",
+      "description": "Lets developers, PMs, or other occasional contributors view and comment on conversations without consuming a full paid seat. Pro plans include up to 50 light users.",
+      "url": "https://www.helpscout.com/pricing/",
+      "includedIn": [
+        "Pro"
+      ]
+    }
+  ],
+  "integrations": {
+    "highlights": [
+      "Salesforce",
+      "HubSpot",
+      "Jira",
+      "Linear",
+      "Slack",
+      "Stripe",
+      "Zapier",
+      "Aircall (phone/voice)",
+      "WhatsApp",
+      "Facebook Messenger & Instagram"
+    ],
+    "enterpriseOnly": [
+      "Salesforce — Plus and Pro only",
+      "Jira — Plus and Pro only",
+      "HubSpot — Plus and Pro only",
+      "Aircall preferred pricing — Pro only"
+    ],
+    "url": null
+  },
+  "security": {
+    "certifications": [
+      "SOC 2 Type 2 (Security and Availability)",
+      "HIPAA compliant (BAA required; available on Pro)",
+      "Periodic independent white-box penetration testing"
+    ],
+    "uptime": "99.99% (stated on site footer and status page)",
+    "dataResidency": [],
+    "samlTier": "Plus (as add-on) and Pro (included)",
+    "url": "https://www.helpscout.com/company/legal/security/"
+  },
+  "api": {
+    "rateLimit": "Standard: 200 calls/minute; Plus: 400 calls/minute; Pro: 800 calls/minute",
+    "authentication": [
+      "OAuth apps",
+      "API key (read/write access)"
+    ],
+    "webhooks": true,
+    "url": null
+  },
+  "customerProofPoints": [
+    {
+      "company": "Brain.fm",
+      "quote": null,
+      "metric": "Average response time under 1 hour even with 100k+ users; resolves 60% of conversations on first email; 95% customer happiness score"
+    },
+    {
+      "company": "Litmus",
+      "quote": "It takes a lot of manual effort, busy work, and aggravation out of the support process, so we can focus on what really matters.",
+      "metric": "Help Scout boosts retention rate of new customers by 26%; used for 9 years across 700k+ users"
+    },
+    {
+      "company": "George Washington University",
+      "quote": null,
+      "metric": "Handles 80,000+ emails per year on 1 platform; managed a 22% spike in email volume; serves 27,000+ students and 6,000 employees"
+    },
+    {
+      "company": "OnePageCRM",
+      "quote": "We've reduced our workload by 50%, making our team twice as productive.",
+      "metric": "Automated workflows reduced support workload by 50%"
+    },
+    {
+      "company": "Mabel's Labels",
+      "quote": null,
+      "metric": "Reduced email volume by 58% while achieving a 93 CSAT score"
+    },
+    {
+      "company": "eCatholic",
+      "quote": "Help Scout helps us strike that balance of empowering customers to find answers on their own, while making sure our team is right there when they need us.",
+      "metric": "Handles over 15% of conversations automatically with AI Answers"
+    }
+  ],
+  "urlsForSalesSharing": [
+    {
+      "label": "Pricing page",
+      "url": "https://www.helpscout.com/pricing/"
+    },
+    {
+      "label": "AI features overview",
+      "url": "https://www.helpscout.com/ai-features/"
+    },
+    {
+      "label": "AI Answers (self-service chatbot)",
+      "url": "https://www.helpscout.com/self-service/"
+    },
+    {
+      "label": "Shared Inbox",
+      "url": "https://www.helpscout.com/inbox/"
+    },
+    {
+      "label": "Knowledge Base (Docs)",
+      "url": "https://www.helpscout.com/knowledge-base/"
+    },
+    {
+      "label": "Proactive Messages & Beacon",
+      "url": "https://www.helpscout.com/proactive-messages/"
+    },
+    {
+      "label": "Analytics & Reporting",
+      "url": "https://www.helpscout.com/analytics/"
+    },
+    {
+      "label": "Customer stories",
+      "url": "https://www.helpscout.com/customers/"
+    },
+    {
+      "label": "Security & Compliance",
+      "url": "https://www.helpscout.com/company/legal/security/"
+    },
+    {
+      "label": "SaaS industry solution page",
+      "url": "https://www.helpscout.com/industry/saas/"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.helpscout.com/",
+      "fetchedAt": "2026-04-21T23:22:28.574Z"
+    },
+    {
+      "url": "https://www.helpscout.com/pricing/",
+      "fetchedAt": "2026-04-21T23:22:28.576Z"
+    },
+    {
+      "url": "https://www.helpscout.com/inbox/",
+      "fetchedAt": "2026-04-21T23:22:28.576Z"
+    },
+    {
+      "url": "https://www.helpscout.com/knowledge-base/",
+      "fetchedAt": "2026-04-21T23:22:28.576Z"
+    },
+    {
+      "url": "https://www.helpscout.com/proactive-messages/",
+      "fetchedAt": "2026-04-21T23:22:28.576Z"
+    },
+    {
+      "url": "https://www.helpscout.com/self-service/",
+      "fetchedAt": "2026-04-21T23:22:28.576Z"
+    },
+    {
+      "url": "https://www.helpscout.com/ai-features/",
+      "fetchedAt": "2026-04-21T23:22:28.576Z"
+    },
+    {
+      "url": "https://www.helpscout.com/analytics/",
+      "fetchedAt": "2026-04-21T23:22:28.576Z"
+    },
+    {
+      "url": "https://www.helpscout.com/customers/",
+      "fetchedAt": "2026-04-21T23:22:28.576Z"
+    },
+    {
+      "url": "https://www.helpscout.com/company/legal/security/",
+      "fetchedAt": "2026-04-21T23:22:28.576Z"
+    },
+    {
+      "url": "https://www.helpscout.com/industry/saas/",
+      "fetchedAt": "2026-04-21T23:22:28.576Z"
+    }
+  ],
+  "updatedAt": "2026-04-21T23:22:28.576Z"
+}

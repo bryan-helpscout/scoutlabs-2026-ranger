@@ -1,0 +1,98 @@
+{
+  "slug": "zendesk",
+  "name": "Zendesk",
+  "positioning": "Position Help Scout as the human-first, right-sized alternative to Zendesk — simpler to set up, easier for agents to love, and dramatically cheaper for SMB/mid-market B2B SaaS teams of 5–100 who don't need enterprise complexity baked into every interaction.",
+  "pricing": {
+    "startingAt": "$19/agent/mo (billed annually)",
+    "notes": "Suite entry tier is deceptively low — AI Copilot adds $50/agent/mo, Workforce Management adds $25, QA adds $35, Advanced Data Privacy adds $50, Contact Center adds $50. Real all-in cost for a mid-market team with AI features can easily hit $155–$209/agent/mo (Suite + Copilot bundles). Help Scout Pro at $65/agent/mo includes HIPAA + SAML SSO + dedicated IP with no à la carte pileup. Internal intel: Help Scout is actively running a Zendesk contract buyout campaign with deferred revenue offers — use this in competitive deals."
+  },
+  "keyStrengths": [
+    "Omnichannel depth: email, voice, messaging, social, live chat all natively unified — genuinely hard to match if the prospect needs all channels in one place",
+    "Enterprise ecosystem: 1,800+ marketplace integrations, robust API, workforce management, QA scoring, and AI agent automation at scale — better fit for 500+ agent operations",
+    "AI maturity: Zendesk's Resolution Learning Loop and autonomous AI agents are purpose-built and well-funded; their AI roadmap is real and moving fast",
+    "Brand recognition and analyst credibility: Forrester, G2, and enterprise procurement teams know Zendesk — easier to get approved in large orgs with formal vendor review"
+  ],
+  "ourAdvantages": [
+    "Price: Help Scout Pro is $65/agent/mo all-in vs Zendesk's effective $155–$209/agent/mo when AI Copilot is added — prospects spending $50K on Zendesk have closed with Help Scout at ~$33K (real deal on record)",
+    "No ticket numbers, no ticket trauma: Help Scout conversations look and feel like email — agents ramp in hours, not weeks; Zendesk's ticket UI intimidates new agents and requires formal training",
+    "Simpler setup: Help Scout works out of the box with no consultant required; Zendesk's pricing page notes 'additional fees' for custom training, hands-on configuration, and 24/7 support",
+    "Shared Inbox + Docs (knowledge base) + Beacon (in-app widget) all included — comparable Zendesk bundle requires Suite tier plus separate configuration; Help Scout Standard starts at $20/agent/mo",
+    "Salesforce, Jira, HubSpot integrations on Plus ($40/agent/mo) — Zendesk charges $50/agent/mo just for Copilot on top of base Suite pricing",
+    "Migration path from Zendesk is proven: Help Scout has dedicated import tooling (Import2 for conversations, legacy importer for Docs/KB) with internal runbooks — reduces switching risk objection"
+  ],
+  "landmines": [
+    "Prospect needs native voice/contact center: Zendesk's Contact Center product is purpose-built; Help Scout has no native voice — if inbound phone volume is significant, we lose",
+    "Prospect is 200+ agents or enterprise procurement: Zendesk's brand, compliance certifications, WFM, and QA tooling are genuinely superior at scale — Help Scout's sweet spot is 5–100 agents",
+    "Prospect requires omnichannel social (WhatsApp, Instagram DMs, Twitter/X): Zendesk natively supports these; Help Scout's channel breadth is narrower",
+    "IT/ITSM use case: Zendesk has a dedicated Employee Service/ITSM product; if the prospect is replacing a ServiceNow-style internal helpdesk, we're not the right fit"
+  ],
+  "pivots": [
+    "If prospect says 'Zendesk has more AI': Acknowledge it's real, then reframe — 'Zendesk's AI Copilot costs $50/agent/mo on top of their base Suite. At that price, a 20-person team is paying $1,000/mo just for the AI layer. Help Scout's AI Assist is included in Plus at $40/agent/mo total. What's the actual AI use case you need to solve?' — then qualify whether autonomous AI agents or basic AI drafting is the real need.",
+    "If prospect says 'We're already using Zendesk, switching is too painful': 'We've migrated hundreds of teams off Zendesk — conversations via Import2, knowledge base articles via our native importer. Most teams are fully live within a few weeks. We also have an active contract buyout program right now. What's left on your current Zendesk contract?'",
+    "If prospect says 'Zendesk is the industry standard': 'For 500-agent enterprise contact centers, yes. For a 20–60 person B2B SaaS support team, the overhead of Zendesk's complexity — configuration, training, add-on costs — often works against you. Reddit is full of Zendesk admins frustrated with API reliability and form/trigger complexity. Our customers tell us their agents actually enjoy using Help Scout, which cuts turnover and ramp time.'",
+    "If prospect is price-sensitive but worried about leaving features behind: 'Walk me through the three features your team uses every day in Zendesk. In our experience, 80% of Zendesk customers at your size are using shared inbox, macros, and a knowledge base — all of which are in Help Scout Standard at $20/agent/mo. The other 20% is Zendesk complexity they pay for but rarely touch.'"
+  ],
+  "sources": [
+    {
+      "url": "https://www.zendesk.com/",
+      "kind": "homepage",
+      "fetchedAt": "2026-04-21T23:31:26.812Z"
+    },
+    {
+      "url": "https://www.zendesk.com/pricing/",
+      "kind": "pricing",
+      "fetchedAt": "2026-04-21T23:31:26.864Z"
+    },
+    {
+      "url": "https://www.zendesk.com/service/ticketing-system/",
+      "kind": "features",
+      "fetchedAt": "2026-04-21T23:31:26.934Z"
+    },
+    {
+      "url": "slab://1qyphb4f",
+      "kind": "slab",
+      "fetchedAt": "2026-04-21T23:31:28.265Z"
+    },
+    {
+      "url": "slab://o24shjzc",
+      "kind": "slab",
+      "fetchedAt": "2026-04-21T23:31:28.265Z"
+    },
+    {
+      "url": "slab://x4yhphbv",
+      "kind": "slab",
+      "fetchedAt": "2026-04-21T23:31:28.265Z"
+    },
+    {
+      "url": "https://helpscout.slack.com/archives/C07PQFD9X5Z/p1769017330150909?thread_ts=1769017330.150909",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:31:28.265Z"
+    },
+    {
+      "url": "https://helpscout.slack.com/archives/C048JTK7J/p1776289181496169?thread_ts=1776287614.586159",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:31:28.265Z"
+    },
+    {
+      "url": "https://helpscout.slack.com/archives/C1TS3UAFQ/p1771856453491289?thread_ts=1771856453.491289",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:31:28.265Z"
+    },
+    {
+      "url": "https://helpscout.slack.com/archives/CEVQXBXFV/p1776170380635289",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:31:28.265Z"
+    },
+    {
+      "url": "https://helpscout.slack.com/archives/C0AU14LD5A9/p1776778376002429",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:31:28.265Z"
+    },
+    {
+      "url": "slack://reddit-signals:Zendesk",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:31:28.265Z"
+    }
+  ],
+  "updatedAt": "2026-04-21T23:32:02.756Z"
+}

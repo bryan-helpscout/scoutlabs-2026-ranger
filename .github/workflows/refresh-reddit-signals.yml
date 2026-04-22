@@ -1,0 +1,83 @@
+name: Refresh Reddit signals
+
+# Pulls bot-scored Reddit signals from #z-reddigent for each tracked
+# competitor, parses them into structured JSON, synthesizes "top patterns"
+# via Sonnet, opens a PR. Runs daily because Reddit conversations move
+# faster than competitor marketing sites.
+#
+# Required secrets:
+#   ANTHROPIC_API_KEY — mandatory (top-pattern synthesis)
+#   SLACK_TOKEN       — mandatory (user token with search:read.public; the
+#                       signals live in a private-ish channel)
+
+on:
+  schedule:
+    - cron: '0 10 * * *' # daily at 10:00 UTC — offset from the weekly jobs
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    name: Refresh and open PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Refresh Reddit signals
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+        run: npm run refresh-reddit-signals
+
+      - name: Summarize diff
+        run: |
+          {
+            echo "## Reddit-signal refresh"
+            if git diff --quiet data/reddit-signals/; then
+              echo
+              echo "✅ No changes."
+            else
+              echo
+              echo '```'
+              git diff --stat data/reddit-signals/
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Open / update PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore: daily Reddit-signal refresh"
+          title: "Daily Reddit-signal refresh"
+          body: |
+            Auto-generated refresh of `data/reddit-signals/*.json` by
+            `scripts/refresh-reddit-signals.ts`.
+
+            Pulls the most recent bot-scored posts from `#z-reddigent` for
+            each competitor, parses score/urgency/reason/URL, and synthesizes
+            3–5 "top patterns" across the batch via Sonnet.
+
+            ### Reviewer checklist
+            - [ ] New high-urgency signals look legitimate (not spam or
+                  off-topic Reddit chatter that slipped past the bot's filter)
+            - [ ] `topPatterns` themes feel sales-actionable, not generic
+
+            Merging is low-stakes — these files feed live-panel cards and
+            chat-prompt injection but don't affect any baseline product facts.
+          branch: auto/refresh-reddit-signals
+          labels: |
+            reddit-signals-refresh
+            automated
+          delete-branch: true

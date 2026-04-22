@@ -1,0 +1,98 @@
+name: Refresh competitor battle cards
+
+# Rebuilds data/competitors/*.json by running scripts/refresh-competitors.ts
+# and opens a PR with the diff. Sales engineering reviews + merges.
+#
+# Runs weekly (Monday 09:00 UTC — before the US business day) and on demand.
+#
+# Required secrets (Settings → Secrets and variables → Actions):
+#   ANTHROPIC_API_KEY   — mandatory; the refresh can't synthesize without it
+#   SLACK_TOKEN         — optional; xoxp-… with search:read.public scope
+#                         (if missing, Slack intel is skipped)
+#   SLAB_MCP_URL        — optional; only reachable from hosts on HS's network,
+#                         so normally skipped from hosted runners. Cards fall
+#                         back to "public site + Slack" sources, still useful.
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'
+  workflow_dispatch: # lets anyone with write access trigger an ad-hoc refresh
+
+jobs:
+  refresh:
+    name: Refresh and open PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    permissions:
+      contents: write       # push the auto/refresh-competitors branch
+      pull-requests: write  # open/update the PR
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          # Node 22 for --experimental-strip-types (TS stripping, no full
+          # transform — our refresh script uses only strip-compatible syntax).
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Refresh competitor cards
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLAB_MCP_URL: ${{ secrets.SLAB_MCP_URL }}
+        run: npm run refresh-competitors
+
+      - name: Summarize diff
+        run: |
+          {
+            echo "## Competitor card refresh"
+            if git diff --quiet data/competitors/; then
+              echo
+              echo "✅ No changes — competitor cards are unchanged from the last refresh."
+            else
+              echo
+              echo '```'
+              git diff --stat data/competitors/
+              echo '```'
+              echo
+              echo "See the PR for the full diff."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Open / update PR with refreshed cards
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore: weekly competitor battle-card refresh"
+          title: "Weekly competitor battle-card refresh"
+          body: |
+            Auto-generated refresh of `data/competitors/*.json` by
+            `scripts/refresh-competitors.ts`.
+
+            ### What this PR does
+            - Fetches each competitor's homepage, pricing, and features pages
+            - Pulls internal intel:
+              - Slack `#sales-opportunities` + `#t-customers` threads mentioning the competitor
+              - Slab search results (**skipped from GitHub-hosted runners** — Slab MCP is on internal DNS. Cards fall back to public-site + Slack intel, which is still strong.)
+            - Re-synthesizes each battle card via Sonnet and writes structured JSON
+
+            ### Reviewer checklist
+            - [ ] Pricing numbers still accurate (competitors quietly raise prices)
+            - [ ] Our advantages don't overstate capabilities
+            - [ ] "Landmines" still reflect real lost-deal patterns
+            - [ ] No hallucinated feature claims or stat inventions
+            - [ ] `updatedAt` bumped; semantic content also changed where expected
+
+            Close this PR without merging if the cards shouldn't be updated this week — the next scheduled run will try again.
+          branch: auto/refresh-competitors
+          labels: |
+            competitor-refresh
+            automated
+          delete-branch: true

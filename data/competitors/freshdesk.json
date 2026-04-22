@@ -1,0 +1,93 @@
+{
+  "slug": "freshdesk",
+  "name": "Freshdesk",
+  "positioning": "Position Help Scout as the simpler, more human alternative to Freshdesk — transparent per-seat pricing with no session-metering surprises, a clean email-native inbox that teams actually adopt, and strong SMB-to-mid-market fit without the complexity tax of Freshdesk's tiered AI add-on model.",
+  "pricing": {
+    "startingAt": "$19/agent/mo (Growth, billed annually); free tier for 1–2 agents for 6 months",
+    "notes": "Freddy AI Copilot is a paid add-on on top of plan cost; Freddy AI Agent sessions cost $49/100 sessions (only 500 free sessions included on Pro/Enterprise, one-time). Enterprise tier is $89/agent/mo. AI costs are metered per-session — every bot interaction counts whether or not it resolves, so true AI cost is higher than the headline rate. Help Scout charges per resolution (AI only charges when it actually resolves); internal analysis shows Freshdesk's effective cost per resolution is ~$0.14 at a 70% resolution rate vs. their advertised $0.10/session."
+  },
+  "keyStrengths": [
+    "Genuinely broad omnichannel coverage — email, chat, phone, social in one workspace; strong for teams requiring every channel unified",
+    "74,000+ customer base and a mature ecosystem of integrations and prebuilt agentic workflows (50+) that larger or more complex teams may find compelling",
+    "Free tier (1–2 agents, 6 months) lowers the barrier to entry for very small teams evaluating cost",
+    "Freshdesk's mid-tier (Pro at $55/agent/mo) includes SLAs and advanced routing, which internal Help Scout packaging research confirms is a competitive pressure point for us"
+  ],
+  "ourAdvantages": [
+    "Pricing transparency: Help Scout Standard $20, Plus $40, Pro $65/agent/mo — no session-metering, no surprise AI overage bills; Freshdesk's AI costs are additive and metered per bot interaction regardless of resolution outcome",
+    "AI resolution model vs. session model: Help Scout charges only when AI actually resolves a conversation; internal deal analysis confirms Freshdesk's $0.10/session translates to ~$0.14/true resolution at typical resolution rates — Help Scout's model is more predictable and often cheaper at volume",
+    "No-ticket-number, email-native UX: conversations feel like email, not a ticketing system — faster agent adoption and less onboarding friction, especially for teams coming from Gmail or Outlook",
+    "Migration is low-risk: Import2 integration supports Freshdesk → Help Scout ticket migration (authenticates via API key, newest-to-oldest); sample import is always free; full migrations under 500K records are absorbed by Help Scout at no customer cost",
+    "Plus plan ($40) includes Salesforce, HubSpot, Jira integrations + AI Assist + multiple Docs sites — comparable or better value than Freshdesk Pro at $55 for SMB/mid-market teams that don't need the full omnichannel stack",
+    "Help Scout is purpose-built for SMB to mid-market B2B SaaS (5–100 agent teams); Freshdesk's complexity and add-on model is optimized for larger, more complex operations that many of our prospects don't need"
+  ],
+  "landmines": [
+    "Prospect requires full omnichannel out of the box (phone/voice, social media DMs, WhatsApp) — Freshdesk's native omnichannel is more mature; Help Scout's strength is email + chat (Beacon)",
+    "Prospect is enterprise-scale (500+ employees, formal ITIL/SLA compliance requirements) — Freshdesk's Enterprise tier ($89) has audit logs, approval workflows, and skills-based routing that Help Scout Pro is still building toward",
+    "Prospect is primarily evaluating on AI agent volume at very high scale (e.g., 2,000+ resolutions/week) and has already modeled Freshdesk's session pricing favorably — requires careful session-vs-resolution reframe before pricing is anchored",
+    "Prospect's decision-maker is a 'Builder' persona (IT/ops, not a support practitioner) who weights integration depth and enterprise security over UX simplicity — Help Scout is a harder sell to non-users focused on feature checklists"
+  ],
+  "pivots": [
+    "If prospect says 'Freshdesk has a free plan and is cheaper to start': Respond — 'Freshdesk's free tier covers only 1–2 agents and 6 months; after that you're at $19+/agent plus AI session costs billed separately. Help Scout's Standard plan is $20/agent all-in, and our AI charges only when a conversation is actually resolved — not every bot interaction. For teams over 3 agents, total cost of ownership is usually comparable or lower with us, and there are no surprise session overage bills mid-month.'",
+    "If prospect says 'Freshdesk's Freddy AI handles more automation': Respond — 'Freddy charges $49 per 100 sessions whether or not the customer gets resolved. Our internal analysis shows that at a typical 70% resolution rate, Freshdesk's effective cost per resolved conversation is ~$0.14 — not $0.10. Help Scout only charges for resolutions. If your team is doing high volume, that difference compounds fast. Want to model it against your current resolution numbers?'",
+    "If prospect says 'We need SLAs and round-robin routing': Respond — 'Help Scout now includes Round Robin routing on Plus ($40/agent/mo) and SLA management on Pro ($65/agent/mo). Freshdesk puts comparable features on their $55 Pro plan. We're priced competitively for those capabilities, and you get them inside a much simpler, email-native interface your agents will actually use without a heavy onboarding lift.'",
+    "If prospect says 'We're already using several Freshworks products (Freshsales, Freshservice)': Flag as a landmine — deep Freshworks suite lock-in is a real retention risk. Acknowledge it honestly: 'If your team is already running Freshsales and Freshservice, staying in the Freshworks ecosystem has real switching cost advantages. Where Help Scout wins is when support quality and agent experience are the primary driver — if ticket volume, cross-sell, and IT service are the main use cases, that's a tougher case for us to make.'"
+  ],
+  "sources": [
+    {
+      "url": "https://www.freshworks.com/freshdesk/",
+      "kind": "homepage",
+      "fetchedAt": "2026-04-21T23:33:05.338Z"
+    },
+    {
+      "url": "https://www.freshworks.com/freshdesk/pricing/",
+      "kind": "pricing",
+      "fetchedAt": "2026-04-21T23:33:06.375Z"
+    },
+    {
+      "url": "slab://x4yhphbv",
+      "kind": "slab",
+      "fetchedAt": "2026-04-21T23:33:07.902Z"
+    },
+    {
+      "url": "slab://6xd0o5qp",
+      "kind": "slab",
+      "fetchedAt": "2026-04-21T23:33:07.902Z"
+    },
+    {
+      "url": "slab://j3xijt4a",
+      "kind": "slab",
+      "fetchedAt": "2026-04-21T23:33:07.902Z"
+    },
+    {
+      "url": "https://helpscout.slack.com/archives/C07PQFD9X5Z/p1773935735361449",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:33:07.902Z"
+    },
+    {
+      "url": "https://helpscout.slack.com/archives/C08TH1VDA4Q/p1774012577883119?thread_ts=1774012577.883119",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:33:07.902Z"
+    },
+    {
+      "url": "https://helpscout.slack.com/archives/C0AU14LD5A9/p1776778376002429",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:33:07.902Z"
+    },
+    {
+      "url": "https://helpscout.slack.com/archives/C08D2JRTN1L/p1773921591284909?thread_ts=1773921591.284909",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:33:07.902Z"
+    },
+    {
+      "url": "https://helpscout.slack.com/archives/C1TS3UAFQ/p1770052782105749?thread_ts=1770052782.105749",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:33:07.902Z"
+    },
+    {
+      "url": "slack://reddit-signals:Freshdesk",
+      "kind": "slack",
+      "fetchedAt": "2026-04-21T23:33:07.903Z"
+    }
+  ],
+  "updatedAt": "2026-04-21T23:33:44.465Z"
+}

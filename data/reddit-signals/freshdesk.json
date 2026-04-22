@@ -1,0 +1,24 @@
+{
+  "competitor": "freshdesk",
+  "competitorName": "Freshdesk",
+  "signals": [
+    {
+      "postUrl": "https://www.reddit.com/r/CustomerSuccess/comments/1smyrcs/ested_multiple_live_chat_tools_for_our_small_team/",
+      "score": "8/10",
+      "urgency": "high",
+      "reason": "The author is evaluating multiple live chat tools, including Freshdesk, which is a direct competitor. They are looking for input from others on their experiences and alternatives, which indicates a potential openness to suggestions like Help Scout.",
+      "capturedAt": "2026-04-16T09:42:52.904Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/ecommerce/comments/1sfuvgr/best_ai_customer_support_tools_in_2026/",
+      "score": "9/10",
+      "urgency": "high",
+      "reason": "The author is actively looking for effective customer support tools, evaluating multiple options, and has expressed frustration with competitors like Intercom and Freshdesk, indicating a strong openness to recommendations. A reply mentioning Help Scout would likely be appreciated.",
+      "capturedAt": "2026-04-08T14:47:45.320Z"
+    }
+  ],
+  "topPatterns": [
+    "evaluating multiple live chat tools away from Freshdesk"
+  ],
+  "updatedAt": "2026-04-21T23:41:05.542Z"
+}

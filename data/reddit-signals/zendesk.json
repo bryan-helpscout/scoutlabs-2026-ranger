@@ -1,0 +1,154 @@
+{
+  "competitor": "zendesk",
+  "competitorName": "Zendesk",
+  "signals": [
+    {
+      "postUrl": "https://www.reddit.com/r/ecommerce/comments/1sr1zk5/ai_for_customer_questions_on_ecomm/",
+      "score": "8/10",
+      "urgency": "high",
+      "reason": "The author is expressing frustration with a current customer support tool (Zendesk) and is actively looking for a better solution that aligns with their catalog and policies, which suggests they may welcome recommendations like Help Scout.",
+      "capturedAt": "2026-04-20T20:33:17.844Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/Zendesk/comments/1i25uze/tickets_created_through_slack_api_dont_trigger/",
+      "score": "8/10",
+      "urgency": "high",
+      "reason": "The author is experiencing frustration with Zendesk and is seeking help for a specific issue, which indicates a potential openness to exploring alternatives like Help Scout.",
+      "capturedAt": "2026-04-14T14:42:19.238Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/Zendesk/comments/1sfuoug/best_ai_chatbot_for_zendesk_selfservice_i_tested/",
+      "score": "5/10",
+      "urgency": "medium",
+      "reason": "The user is comparing Help Scout (indirectly through Zendesk) to competitors like Intercom and Chatbase, indicating they are exploring alternatives, which suggests a potential for churn.",
+      "capturedAt": "2026-04-08T14:38:50.074Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/smallbusiness/comments/1sfq4mn/moved_off_tidio_after_8_months_heres_what/",
+      "score": "3/10",
+      "urgency": "low",
+      "reason": "The author discusses moving away from Tidio and evaluates other competitors like Intercom and Zendesk but does not express intent to leave Help Scout or dissatisfaction specific to it.",
+      "capturedAt": "2026-04-08T11:35:10.804Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/Zendesk/comments/1hxx90z/ticket_comments_are_incomplete_and_inaccurate/",
+      "score": "8/10",
+      "urgency": "high",
+      "reason": "The author is expressing frustration with the Zendesk API and is looking for solutions, which indicates a strong interest in customer support tools. A response suggesting Help Scout as an alternative could be very relevant.",
+      "capturedAt": "2026-04-07T17:43:30.047Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/Zendesk/comments/1pq54sx/what_zendesk_features_do_you_rely_on_for_tough/",
+      "score": "8/10",
+      "urgency": "medium",
+      "reason": "The author is discussing their experience with Zendesk and seeking advice on features that help manage difficult customer interactions. This indicates they are evaluating customer support tools, which is relevant for Help Scout to engage with as a potential alternative.",
+      "capturedAt": "2026-04-07T05:00:47.326Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/Zendesk/comments/1pvb45s/zendesk_speedresponder/",
+      "score": "8/10",
+      "urgency": "medium",
+      "reason": "The author is evaluating a tool for Zendesk and asking for feedback on a suggestion tool, indicating they are looking for solutions to common customer support issues. This aligns closely with Help Scout's focus on improving customer support efficiency.",
+      "capturedAt": "2026-04-07T05:00:34.761Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/Zendesk/comments/1qdgey6/zendesk_powerusers_what_replaced_zest_zendesk/",
+      "score": "8/10",
+      "urgency": "high",
+      "reason": "The author is discussing their experience with Zendesk and seeking alternatives for enhancing ticket visibility, indicating potential frustration with the current offerings. Help Scout could offer a relevant solution.",
+      "capturedAt": "2026-04-07T05:00:15.987Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/CustomerSuccess/comments/1sb7a79/are_ai_customer_service_solutions_worth_the_hype/",
+      "score": "9/10",
+      "urgency": "high",
+      "reason": "The author is evaluating customer support tools and specifically mentions Zendesk, a direct competitor, while exploring alternatives and seeking advice on modern AI solutions. Help Scout could provide a relevant and helpful response.",
+      "capturedAt": "2026-04-03T07:57:33.237Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/Zendesk/comments/1nco0uj/ai_live_chat_solutions_within_zendesk_but/",
+      "score": "8/10",
+      "urgency": "high",
+      "reason": "The author is evaluating customer support solutions and expressing frustration with Zendesk's AI capabilities, indicating they are looking for alternatives. A response mentioning Help Scout would be relevant and likely welcomed.",
+      "capturedAt": "2026-03-27T11:37:36.739Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/Zendesk/comments/1nhk01t/issue_of_new_tickets/",
+      "score": "8/10",
+      "urgency": "high",
+      "reason": "The author is discussing a problem with Zendesk and is seeking solutions, indicating potential frustration with the tool. This creates an opportunity for Help Scout to provide a helpful response and suggest their platform as an alternative.",
+      "capturedAt": "2026-03-27T11:37:32.817Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/Zendesk/comments/1nqugnb/zendeskのチケットを自動で返信してくれる機能を追加したい/",
+      "score": "9/10",
+      "urgency": "high",
+      "reason": "The author is actively seeking alternatives to Zendesk due to high costs and is looking for specific features and capabilities that Help Scout might provide, making a response highly relevant.",
+      "capturedAt": "2026-03-27T11:37:19.356Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/Zendesk/comments/1nvkxki/validate_a_zendesk_use_case/",
+      "score": "8/10",
+      "urgency": "high",
+      "reason": "The user is evaluating Zendesk for their customer support needs and asking if it's a good use case, indicating they might be open to alternatives like Help Scout.",
+      "capturedAt": "2026-03-27T11:37:15.456Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/Zendesk/comments/1hg4p14/best_opensource_and_selfhosting_alternative/",
+      "score": "8/10",
+      "urgency": "high",
+      "reason": "The author is explicitly looking for an alternative to Zendesk, which is a direct competitor of Help Scout. They mention needing a self-hosted solution and compare it to features offered by competitors, indicating a strong intent for recommendations.",
+      "capturedAt": "2026-03-24T15:27:24.287Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/Zendesk/comments/1hmj3d9/how_does_your_company_triage_or_assign_zendesk/",
+      "score": "8/10",
+      "urgency": "high",
+      "reason": "The author is seeking alternatives to Zendesk's FIFO method for ticket triage, indicating a potential openness to exploring other customer support tools, including Help Scout.",
+      "capturedAt": "2026-03-24T15:27:16.564Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/Zendesk/comments/1rybitn/best_way_track_multiple_organizations_opening/",
+      "score": "8/10",
+      "urgency": "high",
+      "reason": "The author is seeking advice on tracking support tickets across multiple organizations, indicating a potential interest in customer support tools. They mention Zendesk, suggesting frustration or challenges with that platform, which makes a response from Help Scout relevant and welcome.",
+      "capturedAt": "2026-03-19T20:35:48.298Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/ecommerce/comments/1rsg3ks/the_ai_didnt_replace_us_we_trained_it_to_replace/",
+      "score": "8/10",
+      "urgency": "medium",
+      "reason": "The author shares their experience with Zendesk and expresses frustration about being replaced by AI, indicating they might be open to exploring other customer support tools like Help Scout.",
+      "capturedAt": "2026-03-13T06:51:19.275Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/Zendesk/comments/1rs179v/i_got_tired_of_manually_auditing_zendesk_seats/",
+      "score": "8/10",
+      "urgency": "medium",
+      "reason": "The author expresses frustration with Zendesk and has built a tool that addresses specific pain points related to customer support management. This indicates a strong interest in alternatives, making Help Scout's engagement relevant.",
+      "capturedAt": "2026-03-12T19:54:34.419Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/Zendesk/comments/1rrrg7b/zendesks_forced_anonymous_verification_rollout_is/",
+      "score": "9/10",
+      "urgency": "high",
+      "reason": "The author is clearly frustrated with Zendesk's recent changes and is actively seeking alternatives, making it a strong opportunity for Help Scout to engage and provide a solution.",
+      "capturedAt": "2026-03-12T14:02:01.417Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/Zendesk/comments/1rr13h2/zendesk_copilot_feedback/",
+      "score": "8/10",
+      "urgency": "high",
+      "reason": "The user is evaluating a customer support tool (Copilot) and is looking for feedback, which indicates openness to alternatives like Help Scout.",
+      "capturedAt": "2026-03-11T18:02:39.707Z"
+    }
+  ],
+  "topPatterns": [
+    "Zendesk pricing too high, actively seeking cost-effective alternatives",
+    "Zendesk AI capabilities frustrating users exploring modern solutions",
+    "Zendesk API reliability issues prompting migration consideration",
+    "ticket triage and visibility gaps driving dissatisfaction with Zendesk",
+    "users building workarounds for Zendesk pain points, ripe for switching"
+  ],
+  "updatedAt": "2026-04-21T23:40:59.983Z"
+}

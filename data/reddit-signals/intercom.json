@@ -1,0 +1,62 @@
+{
+  "competitor": "intercom",
+  "competitorName": "Intercom",
+  "signals": [
+    {
+      "postUrl": "https://www.reddit.com/r/startups/comments/1srkg1i/european_alternatives_to_us_saas_tools_my_updated/",
+      "score": "8/10",
+      "urgency": "medium",
+      "reason": "The author discusses switching from Intercom to Crisp for customer support, indicating they are evaluating alternatives and could benefit from Help Scout's offerings.",
+      "capturedAt": "2026-04-21T11:11:47.677Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/ecommerce/comments/1sfuvgr/best_ai_customer_support_tools_in_2026/",
+      "score": "6/10",
+      "urgency": "medium",
+      "reason": "The author expresses frustration with response times and mentions losing a customer due to delays, indicating dissatisfaction with support quality. They are actively researching alternatives and comparing them to Help Scout, particularly highlighting pricing issues with competitors like Intercom.",
+      "capturedAt": "2026-04-08T14:47:59.972Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/Zendesk/comments/1sfuoug/best_ai_chatbot_for_zendesk_selfservice_i_tested/",
+      "score": "5/10",
+      "urgency": "medium",
+      "reason": "The user is comparing Help Scout (indirectly through Zendesk) to competitors like Intercom and Chatbase, indicating they are exploring alternatives, which suggests a potential for churn.",
+      "capturedAt": "2026-04-08T14:38:50.074Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/smallbusiness/comments/1sfq4mn/moved_off_tidio_after_8_months_heres_what/",
+      "score": "3/10",
+      "urgency": "low",
+      "reason": "The author discusses moving away from Tidio and evaluates other competitors like Intercom and Zendesk but does not express intent to leave Help Scout or dissatisfaction specific to it.",
+      "capturedAt": "2026-04-08T11:35:10.804Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/CustomerSuccess/comments/1o2hr75/advice_ive_been_promoted_to_lead_5_support_agents/",
+      "score": "9/10",
+      "urgency": "high",
+      "reason": "The author is actively seeking advice on managing a large backlog using Intercom, indicating potential frustration with their current tool and openness to alternatives. A non-spammy mention of Help Scout as an alternative could be well-received.",
+      "capturedAt": "2026-04-04T14:06:27.065Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/ecommerce/comments/1rz7nd5/5_live_chat_tools_worth_looking_at_if_youre_a/",
+      "score": "8/10",
+      "urgency": "high",
+      "reason": "The author is evaluating multiple customer support tools and has mentioned Intercom's pricing as a reason for seeking alternatives. Help Scout could be a relevant suggestion in this context, especially since the author is open to recommendations.",
+      "capturedAt": "2026-03-20T20:44:49.286Z"
+    },
+    {
+      "postUrl": "https://www.reddit.com/r/CustomerSuccess/comments/1rta1pl/how_are_you_collecting_and_analyzing_feedback_in/",
+      "score": "8/10",
+      "urgency": "high",
+      "reason": "The author is discussing their challenges with Intercom, indicating potential frustration and looking for alternatives for collecting and analyzing customer feedback.",
+      "capturedAt": "2026-03-14T04:36:23.394Z"
+    }
+  ],
+  "topPatterns": [
+    "Intercom pricing driving users to seek cheaper alternatives",
+    "support backlog management frustrations prompting tool evaluation",
+    "slow response times causing customer churn and tool switching",
+    "users actively comparing Intercom features against multiple competitors"
+  ],
+  "updatedAt": "2026-04-21T23:41:03.053Z"
+}
