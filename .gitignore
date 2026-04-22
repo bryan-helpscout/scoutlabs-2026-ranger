@@ -10,8 +10,10 @@ out/
 tsconfig.tsbuildinfo
 
 # Screenshot outputs (generated via `npm run screenshot-ui`) — track the
-# script, not the binary artifacts.
+# script, not the binary artifacts. The `hero.png` is the stable one
+# referenced from README; everything else is transient.
 screenshots/*.png
+!screenshots/hero.png
 
 # Claude Code per-user state — permissions, approved commands, etc. The
 # shared `.claude/launch.json` (preview-dev server config) IS committed.
