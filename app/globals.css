@@ -1,61 +1,155 @@
+/*
+ * Help Scout Design System (HSDS) — applied to Ranger.
+ *
+ * Light by default, always. No dark mode — HSDS is "a well-organized notebook,
+ * not a cockpit." Cobalt 600 drives actions system-wide; Ranger Green 600 is
+ * the secondary identity layer that says "this is the park ranger speaking"
+ * (logo, assistant avatar, Answer-card chrome).
+ *
+ * Token values trace back to packages/hsds-tokens — see HelpScoutRangerDesign.md.
+ */
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #ffffff;
-  --bg-secondary: #f7f7f5;
-  --bg-tertiary: #efefec;
-  --bg-info: #e6f1fb;
-  --bg-success: #eaf3de;
-  --bg-warning: #faeeda;
-  --bg-danger: #fcebeb;
-  --text: #1a1a1a;
-  --text-secondary: #6b6b6b;
-  --text-tertiary: #9b9b9b;
-  --text-info: #185fa5;
-  --text-success: #3b6d11;
-  --text-warning: #854f0b;
-  --text-danger: #a32d2d;
-  --border: rgba(0,0,0,0.09);
-  --border-md: rgba(0,0,0,0.16);
-  --radius: 8px;
-  --radius-lg: 12px;
-  --hs-blue: #1292EE;
-  --slack: #4A154B;
-  --hubspot: #FF7A59;
-  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-  --mono: 'SF Mono', 'Fira Code', monospace;
-}
+  /* ── Backgrounds ────────────────────────────────────────── */
+  --bg: #ffffff;                       /* color.background.surface — cards, panels */
+  --bg-secondary: #f9fafa;             /* color.background.body — charcoal 100 canvas */
+  --bg-tertiary: #f1f3f5;              /* charcoal 200 — zebra rows, hover highlights */
+  --bg-info: #ebf5ff;                  /* cobalt 100 — info/selected row wash */
+  --bg-success: #f2fff0;               /* green 100 */
+  --bg-warning: #fff6dc;               /* yellow 100 */
+  --bg-danger: #fff0e8;                /* red 100 */
+  --bg-ranger: #e8f5ed;                /* ranger 100 — Ranger-bot surfaces */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #1c1c1c;
-    --bg-secondary: #252525;
-    --bg-tertiary: #2e2e2e;
-    --bg-info: #042c53;
-    --bg-success: #173404;
-    --bg-warning: #412402;
-    --bg-danger: #501313;
-    --text: #f0f0ef;
-    --text-secondary: #a0a09a;
-    --text-tertiary: #6b6b66;
-    --text-info: #85b7eb;
-    --text-success: #c0dd97;
-    --text-warning: #fac775;
-    --text-danger: #f7c1c1;
-    --border: rgba(255,255,255,0.08);
-    --border-md: rgba(255,255,255,0.15);
-  }
+  /* ── Text (Charcoal ladder + status) ────────────────────── */
+  --text: #405261;                     /* charcoal 800 — color.text.default */
+  --text-dark: #314351;                /* charcoal 900 — emphasized body */
+  --text-headline: #131b24;            /* charcoal 1200 — page titles */
+  --text-secondary: #556575;           /* charcoal 700 — muted metadata */
+  --text-tertiary: #7e8e9e;            /* charcoal 600 — disabled text */
+  --text-info: #263aad;                /* cobalt 700 */
+  --text-success: #2d8556;             /* green 600 (readable on green 100) */
+  --text-warning: #a35214;             /* orange 600 */
+  --text-danger: #b83525;              /* red 600 */
+
+  /* ── Borders ────────────────────────────────────────────── */
+  --border: #dfe6eb;                   /* charcoal 300 — color.border.default */
+  --border-md: #abb9c7;                /* charcoal 500 — stronger UI borders */
+  --border-divider: #f1f3f5;           /* charcoal 200 — row dividers */
+
+  /* ── Brand colors ───────────────────────────────────────── */
+  /* Cobalt — system-wide action color */
+  --cobalt-100: #ebf5ff;
+  --cobalt-500: #4176fa;               /* focus ring inner accent */
+  --cobalt-600: #304ddb;               /* PRIMARY action — buttons, links */
+  --cobalt-700: #263aad;               /* hover deepening */
+  --cobalt-800: #1c2674;               /* active/pressed */
+
+  /* Ranger Green — "park ranger speaking" identity layer */
+  --ranger-100: #e8f5ed;
+  --ranger-500: #3d9b63;               /* borders, focus halo inner */
+  --ranger-600: #2d7a4f;               /* Ranger CTA + bot identity */
+  --ranger-700: #236340;               /* hover deepening */
+
+  /* Status spectrum (paired: 500/600 on 100-weight wash) */
+  --red-100: #fff0e8;
+  --red-500: #e54a32;
+  --red-600: #b83525;
+  --green-100: #f2fff0;
+  --green-500: #47c47d;
+  --green-600: #2d8556;
+  --yellow-100: #fff6dc;
+  --yellow-accent: #ffc801;
+
+  /* AI — reserved for future AI-specific surfaces */
+  --ai-plum: #9747fc;
+  --ai-lilac-wash: #fcf9ff;
+
+  /* ── Radii (HSDS 11-step scale, named by purpose) ───────── */
+  --radius-small: 3px;
+  --radius: 8px;                       /* radius.global — buttons, inputs, cards */
+  --radius-input: 8px;                 /* same, semantic alias */
+  --radius-bubble: 10px;               /* message bubbles */
+  --radius-overlay: 10px;              /* modals, popovers */
+  --radius-page: 16px;                 /* page containers, tables */
+  --radius-circle: 100px;              /* pills, avatars */
+  --radius-sm: 6px;                    /* small chips (backwards-compat) */
+  --radius-lg: 12px;
+
+  /* ── Shadows (soft compound drops) ──────────────────────── */
+  --shadow-50: 0px 1px 0px 0px rgba(49, 67, 81, 0.2);
+  --shadow-100:
+    0px 1px 2px 0px rgba(0, 0, 0, 0.04),
+    0px 2px 4px 0px rgba(0, 0, 0, 0.02),
+    0px 4px 8px 0px rgba(0, 0, 0, 0.02),
+    0px 8px 16px 0px rgba(0, 0, 0, 0.01),
+    0px 0px 0px 1px rgba(6, 20, 34, 0.1);
+  --shadow-200:
+    0px 1px 2px 0px rgba(0, 0, 0, 0.08),
+    0px 2px 4px 0px rgba(0, 0, 0, 0.04),
+    0px 4px 8px 0px rgba(0, 0, 0, 0.04),
+    0px 8px 16px 0px rgba(0, 0, 0, 0.02),
+    0px 0px 0px 1px rgba(6, 20, 34, 0.12);
+  --shadow-500:
+    0px 6px 20px rgba(64, 82, 97, 0.12),
+    0px 2px 6px rgba(64, 82, 97, 0.08),
+    0px 0px 0px 1px rgba(49, 67, 81, 0.15);
+  --shadow-700:
+    0px 10px 40px rgba(64, 82, 97, 0.3),
+    0px 2px 3px rgba(64, 82, 97, 0.2);
+
+  /* ── Focus ring (two-layer halo) ────────────────────────── */
+  --focus-ring-inner: var(--cobalt-600);
+  --focus-ring-outer: rgba(121, 188, 255, 0.5);
+
+  /* ── Typography ─────────────────────────────────────────── */
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+          sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  --font-size-base: 13px;              /* HSDS base — compact on purpose */
+
+  /* ── Source/brand colors (external identities, kept as-is) */
+  --slack: #4a154b;
+  --hubspot: #ff7a59;
+  --slab: #ff6542;
+  --linear: #5e6ad2;
+  --reddit: #ff4500;
 }
 
 html, body {
   height: 100%;
   font-family: var(--font);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
   background: var(--bg-secondary);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* scrollbar */
-::-webkit-scrollbar { width: 4px; }
+/* Scrollbars — quiet by default, matching the charcoal ladder. */
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 2px; }
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius-circle);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--border-md); }
+
+/* Global focus ring — two-layer halo per HSDS. Any focusable element that
+   doesn't explicitly override gets the cobalt halo. */
+:focus-visible {
+  outline: 2px solid var(--focus-ring-inner);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--focus-ring-outer);
+  border-radius: var(--radius);
+}
+
+/* Links — cobalt, underline on hover inside body text only. */
+a {
+  color: var(--cobalt-600);
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+a:hover { color: var(--cobalt-700); }

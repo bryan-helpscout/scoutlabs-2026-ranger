@@ -150,13 +150,13 @@ export default function LiveCallPanel({ onAskAboutCard }: LiveCallPanelProps = {
 
   const sourceColor = (s: CardSource): string => {
     switch (s) {
-      case "slab": return "#FF6542";
-      case "slack": return "#4A154B";
-      case "linear": return "#5E6AD2";
-      case "hubspot": return "#FF7A59";
-      case "competitor": return "#DC2626";
-      case "reddit": return "#FF4500"; // Reddit brand orange
-      case "answer": return "#1292EE"; // accent blue, matches input focus
+      case "slab": return "#FF6542";       // Slab brand
+      case "slack": return "#4A154B";      // Slack brand
+      case "linear": return "#5E6AD2";     // Linear brand
+      case "hubspot": return "#FF7A59";    // HubSpot brand
+      case "competitor": return "#B83525"; // HSDS red 600 (destructive feel)
+      case "reddit": return "#FF4500";     // Reddit brand
+      case "answer": return "#2D7A4F";     // HSDS ranger 600 — "Ranger speaking"
     }
   };
 

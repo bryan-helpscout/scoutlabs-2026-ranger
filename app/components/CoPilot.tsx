@@ -368,8 +368,8 @@ export default function CoPilot() {
               </svg>
             </div>
             <div>
-              <div className={styles.logoText}>Sales Co-pilot</div>
-              <div className={styles.logoSub}>Help Scout AI</div>
+              <div className={styles.logoText}>Ranger</div>
+              <div className={styles.logoSub}>Help Scout sales co-pilot</div>
             </div>
           </div>
         </div>
@@ -491,7 +491,7 @@ export default function CoPilot() {
           <div>
             <div className={styles.chatTitle}>
               <span className={styles.statusDot} />
-              Sales Co-pilot
+              Ranger
             </div>
             <div className={styles.chatSubtitle}>
               {prospect?.found
@@ -544,7 +544,7 @@ export default function CoPilot() {
           {messages.map((msg, i) => (
             <div key={i} className={`${styles.msg} ${msg.role === "user" ? styles.msgUser : styles.msgAssistant}`}>
               <div className={styles.msgAvatar}>
-                {msg.role === "user" ? "You" : "HS"}
+                {msg.role === "user" ? "You" : "R"}
               </div>
               <div className={styles.msgBubble}>
                 {msg.streaming && msg.content === "" ? (
