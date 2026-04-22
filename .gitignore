@@ -9,12 +9,17 @@ out/
 # TypeScript incremental build cache
 tsconfig.tsbuildinfo
 
-# Screenshot outputs (generated via `npm run screenshot-ui`) — track the
-# script, not the binary artifacts. The `hero.png` is the stable one
-# referenced from README; everything else is transient.
+# Screenshot outputs (generated via screenshot scripts) — track the
+# scripts, not the binary artifacts by default. Pinned exceptions below
+# are the ones referenced from README / docs.
 screenshots/*.png
 !screenshots/hero.png
+!screenshots/debrief.png
 
 # Claude Code per-user state — permissions, approved commands, etc. The
 # shared `.claude/launch.json` (preview-dev server config) IS committed.
 .claude/settings.local.json
+
+# Local debrief JSONL store — per-machine history feeding the pre-read
+# brief when BigQuery isn't configured. Not for shipping to the repo.
+data/debriefs/

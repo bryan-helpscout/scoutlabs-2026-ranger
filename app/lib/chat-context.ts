@@ -11,6 +11,7 @@
 import { SYSTEM_PROMPT } from "@/app/lib/constants";
 import { searchSlab, getSlabPost } from "@/app/lib/slab";
 import { lookupProspect, formatProspectForPrompt } from "@/app/lib/hubspot";
+import { getProspectBriefing, formatBriefingForPrompt } from "@/app/lib/briefing";
 import { detectAllCompetitorSlugs } from "@/app/lib/competitors/detect";
 import { getCompetitorCard, formatCardForPrompt } from "@/app/lib/competitors/store";
 import {
@@ -55,9 +56,10 @@ export async function assembleChatContext(
   const { messages, prospectName } = input;
 
   const slabQuery = extractQuery(messages);
-  const [slabResults, prospectData] = await Promise.all([
+  const [slabResults, prospectData, briefing] = await Promise.all([
     searchSlab(slabQuery, 3),
     prospectName ? lookupProspect(prospectName) : Promise.resolve(null),
+    prospectName ? getProspectBriefing(prospectName) : Promise.resolve(null),
   ]);
 
   // Slab context — top 3 titles + the full text of the top result (capped).
@@ -112,6 +114,15 @@ export async function assembleChatContext(
     hubspotContext = `\n\nHUBSPOT: searched for "${prospectName}" but no matching company/contact was found. Do not fabricate deal data.`;
   }
 
+  // Pre-read briefing — the history of past debriefs for this prospect
+  // (close-score trend, prior action items, open questions, recurring
+  // risks). Lets Claude reference specific prior commitments without
+  // needing to search anywhere live.
+  let briefingContext = "";
+  if (prospectName && briefing && briefing.callCount > 0) {
+    briefingContext = `\n\n${formatBriefingForPrompt(prospectName, briefing)}`;
+  }
+
   // Product fact-sheet — injected into EVERY reply as the baseline
   // product-knowledge layer (refreshed weekly via CI).
   const pk = getProductKnowledge();
@@ -122,6 +133,7 @@ export async function assembleChatContext(
     productContext +
     slabContext +
     hubspotContext +
+    briefingContext +
     competitorContext +
     redditContext;
 

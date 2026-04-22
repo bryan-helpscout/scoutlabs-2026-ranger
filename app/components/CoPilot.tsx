@@ -30,6 +30,41 @@ interface ProspectData {
   notes?: string;
   contactName?: string;
   contactTitle?: string;
+  briefing?: ProspectBriefing | null;
+}
+
+// Pre-read brief — populated from BigQuery or the local JSONL debrief store.
+interface BriefingScorePoint {
+  generatedAt: string;
+  score: number;
+  band: "cold" | "warm" | "hot" | "ready to close";
+}
+interface BriefingActionItem {
+  owner: "ae" | "prospect" | "team";
+  description: string;
+  priority: "high" | "medium" | "low";
+  dueBy?: string | null;
+  fromCallAt: string;
+}
+interface BriefingQuestionTheme {
+  theme: string;
+  talkingPoint: string;
+}
+interface BriefingNextCallPrep {
+  painPoints: string[];
+  questionThemes: BriefingQuestionTheme[];
+  recommendedFocus: string;
+}
+interface ProspectBriefing {
+  callCount: number;
+  lastCallAt?: string | null;
+  lastCallSummary?: string | null;
+  lastCallTone?: "positive" | "neutral" | "cautious" | "negative" | null;
+  closeScoreHistory: BriefingScorePoint[];
+  openActionItems: BriefingActionItem[];
+  recurringRisks: string[];
+  recentOpenQuestions: string[];
+  nextCallPrep?: BriefingNextCallPrep | null;
 }
 
 // ── quick prompt groups ────────────────────────────────────────────────────
@@ -132,6 +167,151 @@ function formatMessage(text: string): string {
  * splitting on the first structural break (markdown heading, list item,
  * horizontal rule) in case the model skips the blank line.
  */
+/** Relative-time formatter for the briefing's "Last call: 3 days ago". */
+function relativeTime(iso: string | null | undefined): string {
+  if (!iso) return "unknown";
+  const then = new Date(iso).getTime();
+  if (!Number.isFinite(then)) return "unknown";
+  const deltaMs = Date.now() - then;
+  const day = 1000 * 60 * 60 * 24;
+  const days = Math.floor(deltaMs / day);
+  if (days < 1) return "today";
+  if (days === 1) return "yesterday";
+  if (days < 7) return `${days} days ago`;
+  if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
+  return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+/** Map a close band to a color for the score-trend pills. */
+function bandColor(band: BriefingScorePoint["band"]): string {
+  switch (band) {
+    case "ready to close": return "var(--green-600)";
+    case "hot":            return "var(--red-500)";
+    case "warm":           return "var(--yellow-accent)";
+    case "cold":           return "var(--text-tertiary)";
+  }
+}
+
+/** Pre-read brief rendered inside the prospect card — close-score trend,
+ *  last-call summary (collapsed to 2 lines), top action items, and
+ *  recurring risks. Designed to fit in the 220px sidebar with ~11px type. */
+function BriefingSection({ briefing }: { briefing: ProspectBriefing }) {
+  const [summaryExpanded, setSummaryExpanded] = useState(false);
+  return (
+    <div className={styles.briefRoot}>
+      <div className={styles.briefLabel}>
+        Pre-read · {briefing.callCount} prior call{briefing.callCount === 1 ? "" : "s"}
+      </div>
+
+      {briefing.closeScoreHistory.length > 0 && (
+        <div className={styles.briefTrend} title="Close-score trend, newest → oldest">
+          {briefing.closeScoreHistory.map((s, i) => (
+            <span
+              key={i}
+              className={styles.briefTrendBox}
+              style={{ background: bandColor(s.band), color: "#fff" }}
+              title={`${new Date(s.generatedAt).toLocaleDateString()} · ${s.band}`}
+            >
+              {s.score}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {briefing.lastCallAt && (
+        <div className={styles.briefRow}>
+          <span className={styles.briefRowLabel}>Last call</span>
+          <span className={styles.briefRowValue}>
+            {relativeTime(briefing.lastCallAt)}
+            {briefing.lastCallTone ? ` · ${briefing.lastCallTone}` : ""}
+          </span>
+        </div>
+      )}
+
+      {briefing.lastCallSummary && (
+        <div className={summaryExpanded ? styles.briefSummaryOpen : styles.briefSummary}>
+          {briefing.lastCallSummary}
+          {briefing.lastCallSummary.length > 120 && (
+            <button
+              type="button"
+              className={styles.briefMoreBtn}
+              onClick={() => setSummaryExpanded((v) => !v)}
+            >
+              {summaryExpanded ? "less" : "more"}
+            </button>
+          )}
+        </div>
+      )}
+
+      {briefing.nextCallPrep &&
+        (briefing.nextCallPrep.recommendedFocus ||
+          briefing.nextCallPrep.painPoints.length > 0 ||
+          briefing.nextCallPrep.questionThemes.length > 0) && (
+          <div className={styles.briefFocus}>
+            <div className={styles.briefFocusLabel}>🎯 Next-call focus</div>
+            {briefing.nextCallPrep.recommendedFocus && (
+              <div className={styles.briefFocusText}>
+                {briefing.nextCallPrep.recommendedFocus}
+              </div>
+            )}
+            {briefing.nextCallPrep.painPoints.length > 0 && (
+              <div className={styles.briefFocusLine}>
+                <span className={styles.briefFocusInlineLabel}>Pains:</span>{" "}
+                {briefing.nextCallPrep.painPoints.join(" · ")}
+              </div>
+            )}
+            {briefing.nextCallPrep.questionThemes.length > 0 && (
+              <div>
+                <div className={styles.briefFocusInlineLabel}>Asked about</div>
+                <ul className={styles.briefTalkingList}>
+                  {briefing.nextCallPrep.questionThemes.map((q, i) => (
+                    <li key={i} className={styles.briefTalkingItem}>
+                      <div className={styles.briefTalkingTheme}>{q.theme}</div>
+                      {q.talkingPoint && (
+                        <div className={styles.briefTalkingPoint}>
+                          {q.talkingPoint}
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+
+      {briefing.openActionItems.length > 0 && (
+        <>
+          <div className={styles.briefSectionLabel}>Open actions</div>
+          <ul className={styles.briefList}>
+            {briefing.openActionItems.slice(0, 4).map((a, i) => (
+              <li key={i}>
+                <span className={`${styles.lcpOwnerChip} ${styles[`owner_${a.owner}`]}`}>
+                  {a.owner}
+                </span>
+                {a.description}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {briefing.recurringRisks.length > 0 && (
+        <>
+          <div className={styles.briefSectionLabel} style={{ color: "var(--text-danger)" }}>
+            Recurring risks
+          </div>
+          <ul className={styles.briefList}>
+            {briefing.recurringRisks.map((r, i) => (
+              <li key={i}>{r}</li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+  );
+}
+
 function splitLeadAndRest(content: string): { lead: string; rest: string } {
   // 1) Prefer the explicit blank-line break.
   const blank = content.indexOf("\n\n");
@@ -374,6 +554,11 @@ export default function CoPilot() {
           </div>
         </div>
 
+        {/* Scrollable middle — the prospect panel and quick prompts scroll
+            together so a big pre-read briefing never hides the quick-prompt
+            nav. Header + source-integrations panel stay pinned top/bottom. */}
+        <div className={styles.sidebarScroll}>
+
         {/* prospect lookup */}
         <div className={styles.prospectPanel}>
           <div className={styles.panelLabel}>Active prospect</div>
@@ -405,6 +590,13 @@ export default function CoPilot() {
                   {prospect.dealStage}
                 </span>
               )}
+
+              {prospect.briefing && prospect.briefing.callCount > 0 && (
+                <BriefingSection briefing={prospect.briefing} />
+              )}
+              {prospect.briefing && prospect.briefing.callCount === 0 && (
+                <div className={styles.briefEmpty}>No previous calls on record.</div>
+              )}
             </div>
           )}
           {prospect && !prospect.found && !prospectLoading && (
@@ -433,6 +625,8 @@ export default function CoPilot() {
             </div>
           ))}
         </nav>
+        </div>
+        {/* /sidebarScroll — end of scrollable middle */}
 
         {/* source status */}
         <div className={styles.sourcesPanel}>
@@ -658,6 +852,7 @@ export default function CoPilot() {
 
       {/* ── live call panel (right side, transcript-agnostic) ── */}
       <LiveCallPanel
+        prospectName={prospectInput.trim() || null}
         onAskAboutCard={(prompt) => {
           setInput(prompt);
           // Resize the textarea to fit the injected prompt and scroll into view.

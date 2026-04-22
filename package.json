@@ -9,18 +9,23 @@
     "refresh-competitors": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/refresh-competitors.ts",
     "refresh-product-knowledge": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/refresh-product-knowledge.ts",
     "refresh-reddit-signals": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/refresh-reddit-signals.ts",
-    "screenshot-ui": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/screenshot-ui.ts"
+    "screenshot-ui": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/screenshot-ui.ts",
+    "screenshot-debrief": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/screenshot-debrief.ts",
+    "watch-zoom": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/watch-zoom-captions.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.90.0",
+    "@google-cloud/bigquery": "^8.1.1",
     "next": "15.3.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "ws": "^8.20.0"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/ws": "^8.18.1",
     "puppeteer-core": "^24.42.0",
     "typescript": "^5"
   }
