@@ -42,6 +42,12 @@ const ZOOM_DIR =
   process.env.ZOOM_CAPTIONS_DIR ??
   resolve(homedir(), "Documents", "Zoom");
 const POLL_MS = Number(process.env.ZOOM_POLL_INTERVAL_MS ?? 800);
+/** When Ranger has Google SSO enabled, the /api/transcript/ingest endpoint
+ *  requires either a session cookie (browser) OR this shared-secret bearer
+ *  token (for server-to-server scripts like this one). Set the same value
+ *  on both the Ranger server env and here. Empty = omit the header (works
+ *  only when the server is unauthenticated / open). */
+const INGEST_TOKEN = process.env.RANGER_INGEST_TOKEN ?? "";
 
 // Common caption filenames Zoom uses across versions. We check all of them.
 const CAPTION_FILENAMES = [
@@ -156,7 +162,10 @@ async function tailMeeting(state: MeetingState): Promise<void> {
   try {
     const res = await fetch(`${RANGER_URL}/api/transcript/ingest`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(INGEST_TOKEN ? { Authorization: `Bearer ${INGEST_TOKEN}` } : {}),
+      },
       body: JSON.stringify({ meetingId: state.meetingId, chunks: parsed }),
     });
     if (!res.ok) {

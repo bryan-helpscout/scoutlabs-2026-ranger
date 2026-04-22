@@ -106,6 +106,12 @@ export default function LiveCallPanel({
   const [debriefOpen, setDebriefOpen] = useState(false);
   const [debriefLoading, setDebriefLoading] = useState(false);
   const [debriefError, setDebriefError] = useState<string | null>(null);
+  /** Client-side buffer of every transcript chunk the browser has POSTed
+   *  to /api/transcript/ingest during the current call. This is the
+   *  authoritative source for the debrief request on serverless platforms
+   *  (Vercel), where the in-memory server-side store doesn't persist
+   *  across function invocations. Reset when a new call starts. */
+  const sentChunksRef = useRef<Array<{ speaker: string; text: string; timestamp: number }>>([]);
   /** Live interim transcript from the mic — shown under the button as
    *  "Listening: '…'" so the AE can see the recognizer is working. */
   const [interim, setInterim] = useState("");
@@ -124,19 +130,19 @@ export default function LiveCallPanel({
 
   // Mic-driven transcript capture. POSTs each FINAL speech chunk to the
   // same ingest webhook curl/Zoom/Fireflies would use — no backend change.
+  // Also buffers locally so the debrief endpoint has a serverless-safe
+  // source of truth when requested.
   const speech = useSpeechRecognition({
     onFinal: (text) => {
       const mid = activeMeetingIdRef.current;
       if (!mid) return;
+      const chunk = { speaker: "prospect", text, timestamp: Date.now() };
+      sentChunksRef.current.push(chunk);
       // fire-and-forget — one dropped chunk isn't worth surfacing an error
       fetch("/api/transcript/ingest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          meetingId: mid,
-          speaker: "prospect",
-          text,
-        }),
+        body: JSON.stringify({ meetingId: mid, ...chunk }),
       }).catch((err) => console.error("[mic] ingest failed:", err));
       setInterim(""); // clear preview once the chunk finalizes
     },
@@ -189,6 +195,10 @@ export default function LiveCallPanel({
         body: JSON.stringify({
           meetingId: id,
           prospectName: prospectName ?? null,
+          // Send the client-buffered transcript alongside the meetingId so
+          // serverless platforms (where the in-memory store doesn't persist
+          // across instances) still have a complete transcript to analyze.
+          transcriptChunks: sentChunksRef.current,
         }),
       });
       if (!res.ok) {
@@ -226,6 +236,7 @@ export default function LiveCallPanel({
     setActive(true);
     activeMeetingIdRef.current = id;
     setPasteStatus(null);
+    sentChunksRef.current = []; // fresh buffer for this call
     // Mic is OFF by default — user must explicitly enable via the advanced
     // toggle. The browser mic typically only captures the AE's voice well,
     // which is why paste-Zoom-transcript is the primary input method.
@@ -294,6 +305,19 @@ export default function LiveCallPanel({
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const body = (await res.json()) as { accepted?: number };
+      // Mirror to the client-side buffer so the debrief has these chunks
+      // even on serverless where the server-side store might be empty.
+      // Paste-origin chunks don't carry timestamps from parseZoomTranscript;
+      // stamping at ingest time is close enough for the debrief to reason
+      // about chronology.
+      const now = Date.now();
+      for (const c of chunks) {
+        sentChunksRef.current.push({
+          speaker: c.speaker ?? "prospect",
+          text: c.text,
+          timestamp: now,
+        });
+      }
       setPasteStatus(
         `✓ Ingested ${body.accepted ?? chunks.length} line${chunks.length === 1 ? "" : "s"}. Cards will surface as triage runs.`
       );

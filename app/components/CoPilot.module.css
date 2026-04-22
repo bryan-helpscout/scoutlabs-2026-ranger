@@ -63,6 +63,69 @@
   letter-spacing: -0.01em;
 }
 
+/* Signed-in user strip under the logo. Compact — avatar + name + small
+   sign-out link. Hidden when no `user` prop is passed (e.g. SSO off). */
+.userStrip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-divider);
+}
+
+.userAvatar,
+.userAvatarFallback {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-circle);
+  flex-shrink: 0;
+}
+
+.userAvatar {
+  object-fit: cover;
+  border: 1px solid var(--border);
+  background: var(--bg-tertiary);
+}
+
+.userAvatarFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ranger-100);
+  color: var(--ranger-700);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.userName {
+  flex: 1;
+  min-width: 0;
+  font-size: 11px;
+  color: var(--text-dark);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.signOutBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 7px;
+  border-radius: var(--radius-small);
+  cursor: pointer;
+  font-family: var(--font);
+  transition: background 120ms ease, color 120ms ease;
+}
+.signOutBtn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-headline);
+}
+
 .logoSub {
   font-size: 11px;
   color: var(--text-secondary);

@@ -16,8 +16,23 @@ import { persistDebrief } from "@/app/lib/debrief-persist";
 
 export const maxDuration = 60;
 
+interface DebriefRequestBody {
+  meetingId?: string;
+  prospectName?: string | null;
+  /** Client-buffered transcript chunks. The browser keeps a copy of every
+   *  chunk it POSTed to /api/transcript/ingest so the debrief works on
+   *  serverless platforms where the in-memory store doesn't survive across
+   *  function invocations. Safe to omit on long-running hosts — the route
+   *  falls back to the server-side store in that case. */
+  transcriptChunks?: Array<{
+    speaker: string;
+    text: string;
+    timestamp?: number;
+  }>;
+}
+
 export async function POST(req: NextRequest) {
-  let body: { meetingId?: string; prospectName?: string | null };
+  let body: DebriefRequestBody;
   try {
     body = await req.json();
   } catch {
@@ -31,6 +46,7 @@ export async function POST(req: NextRequest) {
   try {
     const debrief = await generateDebrief(body.meetingId, {
       prospectName: body.prospectName ?? null,
+      clientChunks: body.transcriptChunks,
     });
 
     // Persist to BOTH local JSONL (for pre-read brief history in dev) AND

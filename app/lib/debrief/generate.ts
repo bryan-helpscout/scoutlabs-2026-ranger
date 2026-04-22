@@ -113,12 +113,38 @@ function extractFirstJsonObject(s: string): string | null {
   return null;
 }
 
+interface GenerateOptions {
+  prospectName?: string | null;
+  /**
+   * Optional client-provided transcript chunks. On serverless platforms
+   * (Vercel), each API invocation runs in its own process, so the
+   * in-memory transcript store in this instance may be empty even if
+   * ingest succeeded on a different instance. The live-call panel
+   * buffers every chunk it POSTs and can pass the buffer along here as
+   * authoritative input. When present, we use these instead of reading
+   * the store.
+   */
+  clientChunks?: Array<{
+    speaker: string;
+    text: string;
+    timestamp?: number;
+  }>;
+}
+
 export async function generateDebrief(
   meetingId: string,
-  opts: { prospectName?: string | null } = {}
+  opts: GenerateOptions = {}
 ): Promise<MeetingDebrief> {
-  const snapshot = getMeetingSnapshot(meetingId);
-  const chunks = snapshot.chunks;
+  // Prefer client-provided chunks (serverless-safe) over the in-memory
+  // store. Clients always include them when available; falling back to
+  // the store covers long-running deployments where the store is the
+  // single source of truth.
+  let chunks: Array<{ speaker: string; text: string; timestamp?: number }>;
+  if (opts.clientChunks && opts.clientChunks.length > 0) {
+    chunks = opts.clientChunks;
+  } else {
+    chunks = getMeetingSnapshot(meetingId).chunks;
+  }
 
   if (chunks.length === 0) {
     throw new Error(`No transcript recorded for meetingId="${meetingId}"`);

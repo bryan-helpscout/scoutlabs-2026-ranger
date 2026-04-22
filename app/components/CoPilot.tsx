@@ -335,7 +335,18 @@ function splitLeadAndRest(content: string): { lead: string; rest: string } {
 
 // ── component ──────────────────────────────────────────────────────────────
 
-export default function CoPilot() {
+interface CoPilotProps {
+  /** Auth.js session user — passed from the server component wrapping
+   *  page.tsx. Null when the app isn't SSO-gated (dev without auth.local).
+   *  Used to render the signed-in avatar + sign-out affordance. */
+  user?: {
+    name: string | null;
+    email: string | null;
+    image: string | null;
+  } | null;
+}
+
+export default function CoPilot({ user }: CoPilotProps = {}) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -552,6 +563,30 @@ export default function CoPilot() {
               <div className={styles.logoSub}>Help Scout sales co-pilot</div>
             </div>
           </div>
+          {user && (
+            <div className={styles.userStrip} title={user.email ?? undefined}>
+              {user.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={user.image} alt="" className={styles.userAvatar} />
+              ) : (
+                <div className={styles.userAvatarFallback}>
+                  {(user.name ?? user.email ?? "?").trim().charAt(0).toUpperCase()}
+                </div>
+              )}
+              <span className={styles.userName}>
+                {user.name ?? user.email ?? "signed in"}
+              </span>
+              <form action="/api/auth/signout" method="post">
+                <button
+                  type="submit"
+                  className={styles.signOutBtn}
+                  title="Sign out"
+                >
+                  Sign out
+                </button>
+              </form>
+            </div>
+          )}
         </div>
 
         {/* Scrollable middle — the prospect panel and quick prompts scroll

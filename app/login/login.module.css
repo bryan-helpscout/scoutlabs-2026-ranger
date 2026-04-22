@@ -1,0 +1,127 @@
+/*
+ * Sign-in page styling — centered card on the charcoal-100 canvas, HSDS-
+ * compliant elevation + type. Single CTA ("Continue with Google"), brand
+ * hint at the top, error surfacing when the signIn callback rejects.
+ */
+
+.root {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: var(--bg-secondary);
+}
+
+.card {
+  max-width: 440px;
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-page);
+  padding: 36px 36px 28px;
+  box-shadow: var(--shadow-500);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Brand row — matches the sidebar logo treatment */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logoDot {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius);
+  background: var(--ranger-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-50);
+}
+
+.logoText {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-headline);
+  letter-spacing: -0.015em;
+}
+
+.logoSub {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.heading {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-headline);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.subheading {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.error {
+  padding: 11px 14px;
+  border-radius: var(--radius);
+  background: var(--bg-danger);
+  border: 1px solid rgba(184, 53, 37, 0.25);
+  border-left: 3px solid var(--red-500);
+  font-size: 12px;
+  color: var(--text-danger);
+  line-height: 1.5;
+}
+
+/* Google sign-in button — white background, charcoal border, Google "G"
+   on the left. Follows Google's brand guidelines. */
+.googleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg);
+  color: var(--text-dark);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.googleBtn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--text-tertiary);
+}
+
+.googleBtn:active {
+  background: var(--border-divider);
+}
+
+.googleBtn:focus-visible {
+  outline: 2px solid var(--cobalt-600);
+  outline-offset: 2px;
+}
+
+.footer {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  text-align: center;
+  margin-top: 8px;
+}
