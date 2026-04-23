@@ -17,6 +17,10 @@ interface Message {
   usedLinear?: boolean;
   usedCompetitor?: boolean;
   usedReddit?: boolean;
+  /** Server fell back to no-MCP mode because Slack/Linear MCP flaked —
+   *  rendered as a subtle "Slack + Linear temporarily unavailable" note
+   *  below the answer so the AE knows it's still actionable. */
+  degradedNoMcp?: boolean;
   streaming?: boolean;
 }
 
@@ -723,6 +727,7 @@ export default function CoPilot({ user }: CoPilotProps = {}) {
       let usedLinear = false;
       let usedCompetitor = false;
       let usedReddit = false;
+      let degradedNoMcp = false;
       let serverError: string | null = null;
 
       while (true) {
@@ -755,6 +760,7 @@ export default function CoPilot({ user }: CoPilotProps = {}) {
               usedLinear = parsed.usedLinear;
               usedCompetitor = parsed.usedCompetitor;
               usedReddit = parsed.usedReddit;
+              degradedNoMcp = !!parsed.degradedNoMcp;
             } else if (parsed.type === "error") {
               // Server emitted an error mid-stream. Stash the message so the
               // final render shows a diagnostic instead of the generic "No
@@ -787,6 +793,7 @@ export default function CoPilot({ user }: CoPilotProps = {}) {
           usedLinear,
           usedCompetitor,
           usedReddit,
+          degradedNoMcp,
         };
         return updated;
       });
@@ -1248,6 +1255,15 @@ export default function CoPilot({ user }: CoPilotProps = {}) {
                         👤 Reddit signals
                       </span>
                     )}
+                  </div>
+                )}
+                {!msg.streaming && msg.degradedNoMcp && (
+                  <div
+                    className={styles.degradedNote}
+                    title="Slack + Linear MCP connection failed; answer generated from product facts, HubSpot, Slab, and battle cards only."
+                  >
+                    ⚠ Slack &amp; Linear temporarily unavailable — answer may be
+                    missing live team-chat and roadmap context.
                   </div>
                 )}
               </div>

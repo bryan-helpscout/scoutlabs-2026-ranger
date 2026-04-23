@@ -702,6 +702,19 @@
   40% { transform: translateY(-4px); }
 }
 
+/* Degraded-source banner — renders below the source pills when the MCP
+   fallback fires. Yellow amber warning: informative, not alarming. */
+.degradedNote {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: var(--bg-warning);
+  color: var(--text-warning);
+  border: 1px solid var(--border-warning, var(--border));
+  border-radius: var(--radius-small);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
 /* Source pills (assistant message attributions) */
 .sourcePills {
   display: flex;

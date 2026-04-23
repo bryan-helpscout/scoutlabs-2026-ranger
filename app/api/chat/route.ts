@@ -5,6 +5,23 @@ import { assembleChatContext } from "@/app/lib/chat-context";
 
 export const maxDuration = 60;
 
+/** True when the Anthropic API rejected us because a remote MCP server
+ *  (Slack or Linear) failed to respond. In that case we can retry the
+ *  same request without MCP — the AE still gets an answer from product
+ *  facts + HubSpot + Slab + competitor cards, just without live Slack/
+ *  Linear search. Surface area for this detection is narrow on purpose:
+ *  we only swallow the one class of error that's safe to fall back on. */
+function isMcpConnectionError(err: unknown): boolean {
+  if (!(err instanceof Error)) return false;
+  const msg = err.message.toLowerCase();
+  return (
+    msg.includes("mcp") &&
+    (msg.includes("connection error") ||
+      msg.includes("unexpected error") ||
+      msg.includes("server error"))
+  );
+}
+
 export async function POST(req: NextRequest) {
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const { messages, prospectName } = await req.json();
@@ -19,19 +36,42 @@ export async function POST(req: NextRequest) {
   const { system, flags } = await assembleChatContext({ messages, prospectName });
   const { usedSlab, usedHubspot, usedCompetitor, usedReddit } = flags;
 
+  // Open the Anthropic stream. If the first call fails with an
+  // MCP-connection error (remote Slack/Linear MCP flaked), transparently
+  // retry once without MCP servers so the AE still gets an answer.
+  async function openStream(withMcp: boolean) {
+    return client.beta.messages.create({
+      model: SONNET_MODEL,
+      max_tokens: 1024,
+      system,
+      messages,
+      ...(withMcp && MCP_SERVERS.length > 0
+        ? { mcp_servers: MCP_SERVERS, betas: ["mcp-client-2025-04-04"] }
+        : {}),
+      stream: true,
+    });
+  }
+
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
+      let degradedNoMcp = false;
       try {
-        const response = await client.beta.messages.create({
-          model: SONNET_MODEL,
-          max_tokens: 1024,
-          system,
-          messages,
-          mcp_servers: MCP_SERVERS,
-          betas: ["mcp-client-2025-04-04"],
-          stream: true,
-        });
+        let response;
+        try {
+          response = await openStream(true);
+        } catch (err) {
+          if (isMcpConnectionError(err)) {
+            console.warn(
+              "[chat] MCP connection error, retrying without MCP servers:",
+              err instanceof Error ? err.message : err
+            );
+            degradedNoMcp = true;
+            response = await openStream(false);
+          } else {
+            throw err;
+          }
+        }
 
         let usedSlack = false;
         let usedLinear = false;
@@ -98,6 +138,10 @@ export async function POST(req: NextRequest) {
               usedLinear,
               usedCompetitor,
               usedReddit,
+              // Tell the UI we fell back. Client can show a subtle banner
+              // ("Slack + Linear temporarily unavailable") instead of a
+              // scary red error. Undefined in the normal path.
+              degradedNoMcp: degradedNoMcp || undefined,
             })}\n\n`
           )
         );
