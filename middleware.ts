@@ -23,6 +23,12 @@ import { NextResponse } from "next/server";
 export default auth((req) => {
   const path = req.nextUrl.pathname;
 
+  // Dev-only escape hatch. Set RANGER_DEV_NO_AUTH=1 in .env.local to skip
+  // the entire session check — used by the screenshot/preview tooling and
+  // local smoke tests where a real Google session is inconvenient. Never
+  // flip this on in production; Vercel prod envs should leave it unset.
+  if (process.env.RANGER_DEV_NO_AUTH === "1") return;
+
   // Routes that authenticate by some mechanism other than the session cookie.
   const openRoutes = [
     "/login",

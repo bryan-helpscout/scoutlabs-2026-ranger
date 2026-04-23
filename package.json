@@ -11,6 +11,7 @@
     "refresh-reddit-signals": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/refresh-reddit-signals.ts",
     "screenshot-ui": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/screenshot-ui.ts",
     "screenshot-debrief": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/screenshot-debrief.ts",
+    "screenshot-active-prospects": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/screenshot-active-prospects.ts",
     "watch-zoom": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/watch-zoom-captions.ts"
   },
   "dependencies": {
