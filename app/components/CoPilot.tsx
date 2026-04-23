@@ -31,6 +31,37 @@ interface ProspectData {
   contactName?: string;
   contactTitle?: string;
   briefing?: ProspectBriefing | null;
+  health?: {
+    score: number;
+    band: "cold" | "warm" | "hot" | "ready to close";
+    rationale: string;
+  } | null;
+}
+
+/** Row in the Active prospects list, as returned by `/api/prospects/list`. */
+interface ActiveProspectListItem {
+  companyId: string;
+  companyName: string;
+  contactName?: string | null;
+  dealStage?: string | null;
+  dealValue?: string | null;
+  lastActivity?: string | null;
+  stageProgress?: number | null;
+  healthScore: number;
+  healthBand: "cold" | "warm" | "hot" | "ready to close";
+  healthRationale: string;
+  callCount: number;
+  latestCloseScore?: number | null;
+}
+
+/** HubSpot-logged call/meeting surfaced when Ranger has no debrief yet. */
+interface BriefingHubspotCall {
+  kind: "call" | "meeting";
+  at: string;
+  title?: string | null;
+  body?: string | null;
+  durationSec?: number | null;
+  direction?: string | null;
 }
 
 // Pre-read brief — populated from BigQuery or the local JSONL debrief store.
@@ -65,6 +96,7 @@ interface ProspectBriefing {
   recurringRisks: string[];
   recentOpenQuestions: string[];
   nextCallPrep?: BriefingNextCallPrep | null;
+  hubspotLastCall?: BriefingHubspotCall | null;
 }
 
 // ── quick prompt groups ────────────────────────────────────────────────────
@@ -192,15 +224,34 @@ function bandColor(band: BriefingScorePoint["band"]): string {
   }
 }
 
+/** Format seconds as a short "Xm" or "Hh Mm" duration string. */
+function formatDuration(sec: number | null | undefined): string | null {
+  if (!sec || sec < 30) return null;
+  const mins = Math.round(sec / 60);
+  if (mins < 60) return `${mins}m`;
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return m === 0 ? `${h}h` : `${h}h ${m}m`;
+}
+
 /** Pre-read brief rendered inside the prospect card — close-score trend,
  *  last-call summary (collapsed to 2 lines), top action items, and
  *  recurring risks. Designed to fit in the 220px sidebar with ~11px type. */
 function BriefingSection({ briefing }: { briefing: ProspectBriefing }) {
   const [summaryExpanded, setSummaryExpanded] = useState(false);
+  const [hubspotExpanded, setHubspotExpanded] = useState(false);
+
+  // HubSpot-logged call is most useful when Ranger itself hasn't captured a
+  // debrief for this prospect yet. If we have debriefs, we show the Ranger
+  // version (richer) and keep the HubSpot note as a collapsed secondary row.
+  const hsCall = briefing.hubspotLastCall;
+  const noRangerCalls = briefing.callCount === 0;
+
   return (
     <div className={styles.briefRoot}>
       <div className={styles.briefLabel}>
-        Pre-read · {briefing.callCount} prior call{briefing.callCount === 1 ? "" : "s"}
+        Pre-read · {briefing.callCount} prior Ranger call
+        {briefing.callCount === 1 ? "" : "s"}
       </div>
 
       {briefing.closeScoreHistory.length > 0 && (
@@ -220,11 +271,54 @@ function BriefingSection({ briefing }: { briefing: ProspectBriefing }) {
 
       {briefing.lastCallAt && (
         <div className={styles.briefRow}>
-          <span className={styles.briefRowLabel}>Last call</span>
+          <span className={styles.briefRowLabel}>Last Ranger call</span>
           <span className={styles.briefRowValue}>
             {relativeTime(briefing.lastCallAt)}
             {briefing.lastCallTone ? ` · ${briefing.lastCallTone}` : ""}
           </span>
+        </div>
+      )}
+
+      {/* HubSpot-logged last call — shown prominently when there's no Ranger
+          debrief yet (the rep has no other prior-activity context), and as a
+          collapsed row alongside when a Ranger debrief exists. */}
+      {hsCall && (
+        <div className={styles.briefHsCall}>
+          <div className={styles.briefRow}>
+            <span className={styles.briefRowLabel}>
+              Last HubSpot {hsCall.kind}
+            </span>
+            <span className={styles.briefRowValue}>
+              {relativeTime(hsCall.at)}
+              {formatDuration(hsCall.durationSec)
+                ? ` · ${formatDuration(hsCall.durationSec)}`
+                : ""}
+              {hsCall.direction ? ` · ${hsCall.direction.toLowerCase()}` : ""}
+            </span>
+          </div>
+          {hsCall.title && (
+            <div className={styles.briefHsTitle}>{hsCall.title}</div>
+          )}
+          {hsCall.body && (
+            <div
+              className={
+                hubspotExpanded || noRangerCalls
+                  ? styles.briefSummaryOpen
+                  : styles.briefSummary
+              }
+            >
+              {hsCall.body}
+              {hsCall.body.length > 140 && !noRangerCalls && (
+                <button
+                  type="button"
+                  className={styles.briefMoreBtn}
+                  onClick={() => setHubspotExpanded((v) => !v)}
+                >
+                  {hubspotExpanded ? "less" : "more"}
+                </button>
+              )}
+            </div>
+          )}
         </div>
       )}
 
@@ -353,6 +447,8 @@ export default function CoPilot({ user }: CoPilotProps = {}) {
   const [prospectInput, setProspectInput] = useState("");
   const [prospect, setProspect] = useState<ProspectData | null>(null);
   const [prospectLoading, setProspectLoading] = useState(false);
+  const [activeList, setActiveList] = useState<ActiveProspectListItem[] | null>(null);
+  const [activeListLoading, setActiveListLoading] = useState(false);
   /** Indices of assistant messages whose "rest" body is currently expanded.
    *  While a message is streaming we always show the full content; on
    *  completion the rest collapses unless the user had already expanded it. */
@@ -364,6 +460,29 @@ export default function CoPilot({ user }: CoPilotProps = {}) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Fetch the Active prospects list once on mount. The list surfaces top
+  // HubSpot open deals with health scores; each row clicks into the detail
+  // lookup the search input already drives. If HubSpot isn't configured
+  // or returns nothing, we silently render just the search box.
+  useEffect(() => {
+    let cancelled = false;
+    setActiveListLoading(true);
+    fetch("/api/prospects/list")
+      .then((r) => (r.ok ? r.json() : { prospects: [] }))
+      .then((data: { prospects?: ActiveProspectListItem[] }) => {
+        if (!cancelled) setActiveList(data.prospects ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setActiveList([]);
+      })
+      .finally(() => {
+        if (!cancelled) setActiveListLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // ── prospect lookup ──────────────────────────────────────────────────────
 
@@ -393,6 +512,18 @@ export default function CoPilot({ user }: CoPilotProps = {}) {
     if (!val.trim()) { setProspect(null); return; }
     prospectTimer.current = setTimeout(() => lookupProspect(val), 800);
   };
+
+  /** Click a row in the Active prospects list — populate the search input
+   *  with the company name so downstream chat prompts inherit the prospect
+   *  context, and immediately kick off the full detail lookup. */
+  const selectActiveProspect = useCallback(
+    (p: ActiveProspectListItem) => {
+      if (prospectTimer.current) clearTimeout(prospectTimer.current);
+      setProspectInput(p.companyName);
+      lookupProspect(p.companyName);
+    },
+    [lookupProspect]
+  );
 
   // ── chat ─────────────────────────────────────────────────────────────────
 
@@ -594,9 +725,62 @@ export default function CoPilot({ user }: CoPilotProps = {}) {
             nav. Header + source-integrations panel stay pinned top/bottom. */}
         <div className={styles.sidebarScroll}>
 
+        {/* active prospects list — populated from HubSpot open deals, sorted
+            by computed health score. Click a row to load the detail card
+            below (populates the search input so chat inherits the context). */}
+        {(activeListLoading || (activeList && activeList.length > 0)) && (
+          <div className={styles.prospectPanel}>
+            <div className={styles.panelLabel}>Active prospects</div>
+            {activeListLoading && (
+              <div className={styles.prospectStatus}>Loading from HubSpot...</div>
+            )}
+            {activeList && activeList.length > 0 && (
+              <ul className={styles.activeList}>
+                {activeList.map((p) => {
+                  const selected =
+                    prospect?.companyName?.toLowerCase() ===
+                    p.companyName.toLowerCase();
+                  return (
+                    <li key={p.companyId}>
+                      <button
+                        type="button"
+                        className={`${styles.activeRow} ${selected ? styles.activeRowSelected : ""}`}
+                        onClick={() => selectActiveProspect(p)}
+                        title={p.healthRationale}
+                      >
+                        <div className={styles.activeRowMain}>
+                          <div className={styles.activeRowName}>
+                            {p.companyName}
+                          </div>
+                          <div className={styles.activeRowMeta}>
+                            {[
+                              p.dealStage,
+                              p.dealValue,
+                              p.lastActivity &&
+                                `Active ${relativeTime(p.lastActivity)}`,
+                            ]
+                              .filter(Boolean)
+                              .join(" · ")}
+                          </div>
+                        </div>
+                        <div
+                          className={`${styles.healthPill} ${styles[`health_${p.healthBand.replace(/\s+/g, "_")}`]}`}
+                          aria-label={`Health ${p.healthScore}/100, ${p.healthBand}`}
+                        >
+                          {p.healthScore}
+                        </div>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+        )}
+
         {/* prospect lookup */}
         <div className={styles.prospectPanel}>
-          <div className={styles.panelLabel}>Active prospect</div>
+          <div className={styles.panelLabel}>Prospect lookup</div>
           <input
             className={styles.prospectInput}
             type="text"
@@ -609,7 +793,18 @@ export default function CoPilot({ user }: CoPilotProps = {}) {
           )}
           {prospect && prospect.found && !prospectLoading && (
             <div className={styles.prospectCard}>
-              <div className={styles.pcName}>{prospect.companyName}</div>
+              <div className={styles.pcHeader}>
+                <div className={styles.pcName}>{prospect.companyName}</div>
+                {prospect.health && (
+                  <div
+                    className={`${styles.healthPill} ${styles[`health_${prospect.health.band.replace(/\s+/g, "_")}`]}`}
+                    title={prospect.health.rationale}
+                    aria-label={`Health ${prospect.health.score}/100, ${prospect.health.band}`}
+                  >
+                    {prospect.health.score}
+                  </div>
+                )}
+              </div>
               <div className={styles.pcMeta}>
                 {[
                   prospect.contactName &&
@@ -626,12 +821,18 @@ export default function CoPilot({ user }: CoPilotProps = {}) {
                 </span>
               )}
 
-              {prospect.briefing && prospect.briefing.callCount > 0 && (
-                <BriefingSection briefing={prospect.briefing} />
-              )}
-              {prospect.briefing && prospect.briefing.callCount === 0 && (
-                <div className={styles.briefEmpty}>No previous calls on record.</div>
-              )}
+              {prospect.briefing &&
+                (prospect.briefing.callCount > 0 ||
+                  prospect.briefing.hubspotLastCall) && (
+                  <BriefingSection briefing={prospect.briefing} />
+                )}
+              {prospect.briefing &&
+                prospect.briefing.callCount === 0 &&
+                !prospect.briefing.hubspotLastCall && (
+                  <div className={styles.briefEmpty}>
+                    No previous calls on record.
+                  </div>
+                )}
             </div>
           )}
           {prospect && !prospect.found && !prospectLoading && (

@@ -37,6 +37,20 @@ export interface BriefingNextCallPrep {
   recommendedFocus: string;
 }
 
+/** HubSpot-sourced last call — used when the AE has logged a call/meeting
+ *  in CRM but hasn't run a Ranger debrief yet. Lets the pre-read still show
+ *  *something* on day one with a prospect. Shape matches `HubSpotLastCall`
+ *  in `hubspot.ts` but is re-declared here so `briefing.ts` doesn't need to
+ *  import from hubspot.ts (circular-import safety). */
+export interface BriefingHubspotCall {
+  kind: "call" | "meeting";
+  at: string;
+  title?: string | null;
+  body?: string | null;
+  durationSec?: number | null;
+  direction?: string | null;
+}
+
 export interface ProspectBriefing {
   /** Total debriefs on record for this prospect. */
   callCount: number;
@@ -57,6 +71,11 @@ export interface ProspectBriefing {
   /** Synthesized "here's where to focus the NEXT call" from the most recent
    *  debrief. Null until at least one debrief has been generated. */
   nextCallPrep?: BriefingNextCallPrep | null;
+  /** HubSpot's most recent call/meeting engagement for this prospect.
+   *  Populated by `/api/prospect` (not by `getProspectBriefing` itself —
+   *  that function doesn't know the companyId). Lets the pre-read render
+   *  CRM-logged activity when no Ranger debrief exists yet. */
+  hubspotLastCall?: BriefingHubspotCall | null;
 }
 
 const MAX_RECENT_CALLS = 5;

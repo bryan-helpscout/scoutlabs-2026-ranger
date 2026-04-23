@@ -1624,6 +1624,111 @@
   color: var(--text-dark);
 }
 
+/* ── Active prospects list ─────────────────────────────────────────────── */
+/* Row list populated by /api/prospects/list. Click a row to drive the
+   prospect-lookup flow below. Kept dense so ~8 rows fit without pushing
+   the quick-prompts out of view in a normal-height viewport. */
+.activeList {
+  list-style: none;
+  margin: 6px 0 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.activeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+.activeRow:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-md);
+}
+.activeRowSelected {
+  background: var(--bg-info);
+  border-color: var(--cobalt-500);
+}
+
+.activeRowMain {
+  flex: 1;
+  min-width: 0;
+}
+.activeRowName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dark);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.activeRowMeta {
+  font-size: 10.5px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Health pill ───────────────────────────────────────────────────────── */
+/* Used in two places: the active-prospect list row, and the top-right of
+   the detail card. Same palette as the score-trend pills for consistency. */
+.healthPill {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: var(--radius-circle);
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.01em;
+}
+.health_cold           { background: var(--text-tertiary); }
+.health_warm           { background: var(--yellow-accent); color: var(--text-dark); }
+.health_hot            { background: var(--red-500); }
+.health_ready_to_close { background: var(--green-600); }
+
+.pcHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* ── HubSpot last-call block inside BriefingSection ────────────────────── */
+/* Visually distinct from the Ranger debrief content — softer background +
+   HubSpot-orange accent bar on the left. Lets the AE see at a glance that
+   this is CRM-logged activity, not a Ranger-synthesized debrief. */
+.briefHsCall {
+  margin-top: 4px;
+  padding: 8px 10px;
+  background: var(--bg-tertiary);
+  border-left: 3px solid #FF7A59;
+  border-radius: var(--radius-small);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.briefHsTitle {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .sidebar { display: none; }
