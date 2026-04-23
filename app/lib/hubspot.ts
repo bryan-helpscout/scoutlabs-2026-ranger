@@ -398,15 +398,18 @@ async function getClosedStageIds(): Promise<Set<string>> {
 }
 
 /**
- * List up to `limit` active (open) deals sorted by most recent activity,
- * each joined with its primary company + primary contact. This is what
- * populates the sidebar's "Active prospects" list.
+ * List up to `limit` active (open) deals — "anyone we're currently talking
+ * with that we have yet to close." Any deal whose stage is NOT closed-won
+ * or closed-lost qualifies, regardless of how recent the last activity
+ * was. The caller (the API route) decides how to sort the result —
+ * typically by computed health score DESC.
  *
+ * Each row joins the deal with its primary company + primary contact.
  * We intentionally fetch deals (not companies) so the list reflects real
  * pipeline activity — a company with only an old closed-won deal doesn't
  * clutter the list.
  */
-export async function listActiveProspects(limit = 8): Promise<ActiveProspect[]> {
+export async function listActiveProspects(limit = 20): Promise<ActiveProspect[]> {
   if (!process.env.HUBSPOT_TOKEN) return [];
 
   const closedIds = await getClosedStageIds();

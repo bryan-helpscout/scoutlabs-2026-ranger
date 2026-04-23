@@ -20,6 +20,20 @@ interface Message {
   streaming?: boolean;
 }
 
+interface HealthContributor {
+  label: string;
+  direction: "up" | "down" | "flat";
+  weight: number;
+}
+interface HealthEvidence {
+  sentiment?: "positive" | "neutral" | "cautious" | "negative" | null;
+  prospectVoice: string[];
+  painPoints: string[];
+  risks: string[];
+  openQuestions: string[];
+  contributors: HealthContributor[];
+}
+
 interface ProspectData {
   found: boolean;
   companyName?: string;
@@ -35,6 +49,7 @@ interface ProspectData {
     score: number;
     band: "cold" | "warm" | "hot" | "ready to close";
     rationale: string;
+    evidence: HealthEvidence;
   } | null;
 }
 
@@ -50,6 +65,7 @@ interface ActiveProspectListItem {
   healthScore: number;
   healthBand: "cold" | "warm" | "hot" | "ready to close";
   healthRationale: string;
+  healthEvidence: HealthEvidence;
   callCount: number;
   latestCloseScore?: number | null;
 }
@@ -92,8 +108,10 @@ interface ProspectBriefing {
   lastCallSummary?: string | null;
   lastCallTone?: "positive" | "neutral" | "cautious" | "negative" | null;
   closeScoreHistory: BriefingScorePoint[];
+  lastCallSignals?: string[];
   openActionItems: BriefingActionItem[];
   recurringRisks: string[];
+  lastCallRisks?: string[];
   recentOpenQuestions: string[];
   nextCallPrep?: BriefingNextCallPrep | null;
   hubspotLastCall?: BriefingHubspotCall | null;
@@ -406,6 +424,134 @@ function BriefingSection({ briefing }: { briefing: ProspectBriefing }) {
   );
 }
 
+/**
+ * "Why this health score" panel — stacks below the health pill on the
+ * detail card. Surfaces the sentiment, actual prospect quotes, pains,
+ * risks, and the ranked signal contributors that moved the number. Every
+ * field is optional — when nothing's available for a prospect (e.g. a
+ * fresh lead with no debrief yet) the whole panel collapses to nothing.
+ */
+function HealthEvidencePanel({
+  score,
+  band,
+  rationale,
+  evidence,
+}: {
+  score: number;
+  band: "cold" | "warm" | "hot" | "ready to close";
+  rationale: string;
+  evidence: HealthEvidence;
+}) {
+  const hasContent =
+    evidence.prospectVoice.length > 0 ||
+    evidence.painPoints.length > 0 ||
+    evidence.risks.length > 0 ||
+    evidence.openQuestions.length > 0 ||
+    evidence.contributors.length > 0;
+  if (!hasContent) return null;
+
+  const sentimentClass = evidence.sentiment
+    ? styles[`sentiment_${evidence.sentiment}`]
+    : "";
+
+  return (
+    <div className={styles.healthEvidence}>
+      <div className={styles.healthEvidenceHead}>
+        <span className={styles.healthEvidenceTitle}>
+          Why this score · {score}/{100}
+        </span>
+        <span className={styles.healthEvidenceBand}>{band}</span>
+      </div>
+      <div className={styles.healthEvidenceRationale}>{rationale}</div>
+
+      {evidence.sentiment && (
+        <div className={styles.healthRow}>
+          <span className={styles.healthRowLabel}>Sentiment</span>
+          <span className={`${styles.sentimentBadge} ${sentimentClass}`}>
+            {evidence.sentiment}
+          </span>
+        </div>
+      )}
+
+      {evidence.prospectVoice.length > 0 && (
+        <>
+          <div className={styles.healthSectionLabel}>
+            What they&apos;re saying
+          </div>
+          <ul className={styles.healthQuoteList}>
+            {evidence.prospectVoice.map((q, i) => (
+              <li key={i} className={styles.healthQuote}>
+                &ldquo;{q}&rdquo;
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {evidence.painPoints.length > 0 && (
+        <>
+          <div className={styles.healthSectionLabel}>Pain points raised</div>
+          <ul className={styles.healthBulletList}>
+            {evidence.painPoints.map((p, i) => (
+              <li key={i}>{p}</li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {evidence.risks.length > 0 && (
+        <>
+          <div
+            className={styles.healthSectionLabel}
+            style={{ color: "var(--text-danger)" }}
+          >
+            Deal risks
+          </div>
+          <ul className={styles.healthBulletList}>
+            {evidence.risks.map((r, i) => (
+              <li key={i}>{r}</li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {evidence.openQuestions.length > 0 && (
+        <>
+          <div className={styles.healthSectionLabel}>Still asking about</div>
+          <ul className={styles.healthBulletList}>
+            {evidence.openQuestions.map((q, i) => (
+              <li key={i}>{q}</li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {evidence.contributors.length > 0 && (
+        <>
+          <div className={styles.healthSectionLabel}>What moved the score</div>
+          <ul className={styles.healthContribList}>
+            {evidence.contributors.map((c, i) => (
+              <li key={i} className={styles.healthContrib}>
+                <span
+                  className={`${styles.healthContribArrow} ${styles[`arrow_${c.direction}`]}`}
+                  aria-hidden="true"
+                >
+                  {c.direction === "up" ? "▲" : c.direction === "down" ? "▼" : "◆"}
+                </span>
+                <span className={styles.healthContribLabel}>{c.label}</span>
+                <span className={styles.healthContribWeight}>
+                  {c.direction === "down" ? "−" : "+"}
+                  {c.weight}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+  );
+}
+
 function splitLeadAndRest(content: string): { lead: string; rest: string } {
   // 1) Prefer the explicit blank-line break.
   const blank = content.indexOf("\n\n");
@@ -449,6 +595,10 @@ export default function CoPilot({ user }: CoPilotProps = {}) {
   const [prospectLoading, setProspectLoading] = useState(false);
   const [activeList, setActiveList] = useState<ActiveProspectListItem[] | null>(null);
   const [activeListLoading, setActiveListLoading] = useState(false);
+  /** Sort mode for the Active prospects list. "health" = highest score
+   *  first (AE's best-bet deals). "recency" = most-recently-moved first
+   *  (what needs follow-up right now). */
+  const [activeSort, setActiveSort] = useState<"health" | "recency">("health");
   /** Indices of assistant messages whose "rest" body is currently expanded.
    *  While a message is streaming we always show the full content; on
    *  completion the rest collapses unless the user had already expanded it. */
@@ -461,14 +611,14 @@ export default function CoPilot({ user }: CoPilotProps = {}) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Fetch the Active prospects list once on mount. The list surfaces top
-  // HubSpot open deals with health scores; each row clicks into the detail
-  // lookup the search input already drives. If HubSpot isn't configured
-  // or returns nothing, we silently render just the search box.
+  // Fetch the Active prospects list. Refires when the sort mode changes
+  // — the server does the sort so the UI stays in lockstep with what the
+  // scoring logic considers "top." If HubSpot isn't configured or returns
+  // nothing, we silently render just the search box.
   useEffect(() => {
     let cancelled = false;
     setActiveListLoading(true);
-    fetch("/api/prospects/list")
+    fetch(`/api/prospects/list?sort=${activeSort}`)
       .then((r) => (r.ok ? r.json() : { prospects: [] }))
       .then((data: { prospects?: ActiveProspectListItem[] }) => {
         if (!cancelled) setActiveList(data.prospects ?? []);
@@ -482,7 +632,7 @@ export default function CoPilot({ user }: CoPilotProps = {}) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [activeSort]);
 
   // ── prospect lookup ──────────────────────────────────────────────────────
 
@@ -730,7 +880,27 @@ export default function CoPilot({ user }: CoPilotProps = {}) {
             below (populates the search input so chat inherits the context). */}
         {(activeListLoading || (activeList && activeList.length > 0)) && (
           <div className={styles.prospectPanel}>
-            <div className={styles.panelLabel}>Active prospects</div>
+            <div className={styles.panelHeaderRow}>
+              <div className={styles.panelLabel}>Active prospects</div>
+              <div className={styles.sortToggle} role="group" aria-label="Sort active prospects">
+                <button
+                  type="button"
+                  className={`${styles.sortBtn} ${activeSort === "health" ? styles.sortBtnActive : ""}`}
+                  onClick={() => setActiveSort("health")}
+                  title="Sort by highest health score"
+                >
+                  Health
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.sortBtn} ${activeSort === "recency" ? styles.sortBtnActive : ""}`}
+                  onClick={() => setActiveSort("recency")}
+                  title="Sort by most recent activity"
+                >
+                  Recent
+                </button>
+              </div>
+            </div>
             {activeListLoading && (
               <div className={styles.prospectStatus}>Loading from HubSpot...</div>
             )}
@@ -746,7 +916,18 @@ export default function CoPilot({ user }: CoPilotProps = {}) {
                         type="button"
                         className={`${styles.activeRow} ${selected ? styles.activeRowSelected : ""}`}
                         onClick={() => selectActiveProspect(p)}
-                        title={p.healthRationale}
+                        // Tooltip combines the one-line rationale with any
+                        // available prospect sentiment + one voice signal
+                        // so hovering a row gives the AE real flavor.
+                        title={[
+                          p.healthRationale,
+                          p.healthEvidence?.sentiment &&
+                            `Sentiment: ${p.healthEvidence.sentiment}`,
+                          p.healthEvidence?.prospectVoice?.[0] &&
+                            `"${p.healthEvidence.prospectVoice[0]}"`,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")}
                       >
                         <div className={styles.activeRowMain}>
                           <div className={styles.activeRowName}>
@@ -819,6 +1000,15 @@ export default function CoPilot({ user }: CoPilotProps = {}) {
                 <span className={`${styles.pcBadge} ${prospectBadgeClass()}`}>
                   {prospect.dealStage}
                 </span>
+              )}
+
+              {prospect.health && (
+                <HealthEvidencePanel
+                  score={prospect.health.score}
+                  band={prospect.health.band}
+                  rationale={prospect.health.rationale}
+                  evidence={prospect.health.evidence}
+                />
               )}
 
               {prospect.briefing &&

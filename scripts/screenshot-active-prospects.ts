@@ -41,6 +41,15 @@ if (!existsSync(OUT_DIR)) mkdirSync(OUT_DIR, { recursive: true });
 // the full color range. The API route sorts by healthScore DESC, so we
 // pre-sort here to match what the real server would do.
 
+const EMPTY_EVIDENCE = {
+  sentiment: null,
+  prospectVoice: [] as string[],
+  painPoints: [] as string[],
+  risks: [] as string[],
+  openQuestions: [] as string[],
+  contributors: [] as Array<{ label: string; direction: "up" | "down" | "flat"; weight: number }>,
+};
+
 const LIST_PAYLOAD = {
   prospects: [
     {
@@ -56,6 +65,29 @@ const LIST_PAYLOAD = {
       healthScore: 87,
       healthBand: "ready to close",
       healthRationale: "Strong Ranger debrief score (78/100)",
+      healthEvidence: {
+        sentiment: "positive",
+        prospectVoice: [
+          "asked three detailed questions about SAML SSO setup with Okta",
+          "said the pricing model is 'a real improvement' over their Zendesk renewal",
+        ],
+        painPoints: [
+          "Zendesk renewal cost pressure from CFO",
+          "Poor SLA-breach reporting on current plan",
+        ],
+        risks: [
+          "Tyler is not the economic buyer — VP Ops signs",
+        ],
+        openQuestions: [
+          "Exact migration window for 80k historical conversations?",
+        ],
+        contributors: [
+          { label: "Close score trending up (62→78)", direction: "up", weight: 32 },
+          { label: "Late-stage deal", direction: "up", weight: 21 },
+          { label: "Very recent activity", direction: "up", weight: 25 },
+          { label: "1 open risk", direction: "down", weight: 3 },
+        ],
+      },
       callCount: 3,
       latestCloseScore: 78,
     },
@@ -72,6 +104,7 @@ const LIST_PAYLOAD = {
       healthScore: 71,
       healthBand: "hot",
       healthRationale: "Late-stage with recent activity",
+      healthEvidence: EMPTY_EVIDENCE,
       callCount: 2,
       latestCloseScore: 62,
     },
@@ -88,6 +121,7 @@ const LIST_PAYLOAD = {
       healthScore: 58,
       healthBand: "hot",
       healthRationale: "Ranger debrief: 54/100 last call",
+      healthEvidence: EMPTY_EVIDENCE,
       callCount: 1,
       latestCloseScore: 54,
     },
@@ -104,6 +138,7 @@ const LIST_PAYLOAD = {
       healthScore: 44,
       healthBand: "warm",
       healthRationale: "Very recent activity",
+      healthEvidence: EMPTY_EVIDENCE,
       callCount: 0,
       latestCloseScore: null,
     },
@@ -120,6 +155,7 @@ const LIST_PAYLOAD = {
       healthScore: 36,
       healthBand: "warm",
       healthRationale: "Limited signal — early-stage or stale",
+      healthEvidence: EMPTY_EVIDENCE,
       callCount: 0,
       latestCloseScore: null,
     },
@@ -136,6 +172,7 @@ const LIST_PAYLOAD = {
       healthScore: 18,
       healthBand: "cold",
       healthRationale: "No activity in 72 days — deal likely stalling",
+      healthEvidence: EMPTY_EVIDENCE,
       callCount: 2,
       latestCloseScore: 34,
     },
@@ -162,6 +199,31 @@ const VISTABEAM_DETAIL = {
     score: 87,
     band: "ready to close",
     rationale: "Strong Ranger debrief score (78/100)",
+    evidence: {
+      sentiment: "positive",
+      prospectVoice: [
+        "asked three detailed questions about SAML SSO setup with Okta",
+        "said the pricing model is 'a real improvement' over their Zendesk renewal",
+      ],
+      painPoints: [
+        "Zendesk renewal cost pressure from CFO",
+        "Poor SLA-breach reporting on current plan",
+      ],
+      risks: [
+        "Tyler is not the economic buyer — VP Ops signs",
+        "Data residency question for Berlin office still open",
+      ],
+      openQuestions: [
+        "Exact migration window for 80k historical conversations?",
+        "Do we support data residency in EU for their Berlin office?",
+      ],
+      contributors: [
+        { label: "Close score trending up (62→78)", direction: "up", weight: 32 },
+        { label: "Late-stage deal", direction: "up", weight: 21 },
+        { label: "Very recent activity", direction: "up", weight: 25 },
+        { label: "2 open risks", direction: "down", weight: 6 },
+      ],
+    },
   },
   briefing: {
     callCount: 3,
@@ -259,7 +321,10 @@ async function main() {
     await page.setRequestInterception(true);
     page.on("request", (req) => {
       const url = req.url();
-      if (url.endsWith("/api/prospects/list")) {
+      // Use pathname match so query-string variants (e.g. ?sort=health) all
+      // hit the intercept.
+      const pathname = new globalThis.URL(url).pathname;
+      if (pathname === "/api/prospects/list") {
         req.respond({
           status: 200,
           contentType: "application/json",
@@ -267,7 +332,7 @@ async function main() {
         });
         return;
       }
-      if (url.endsWith("/api/prospect") && req.method() === "POST") {
+      if (pathname === "/api/prospect" && req.method() === "POST") {
         req.respond({
           status: 200,
           contentType: "application/json",

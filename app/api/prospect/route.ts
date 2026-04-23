@@ -4,6 +4,7 @@ import { getProspectBriefing } from "@/app/lib/briefing";
 import {
   computeHealthScore,
   type HealthBand,
+  type HealthEvidence,
 } from "@/app/lib/health-score";
 
 export const maxDuration = 30;
@@ -34,7 +35,12 @@ export async function POST(req: NextRequest) {
   const latestCloseScore = briefing.closeScoreHistory?.[0]?.score ?? null;
   const previousCloseScore = briefing.closeScoreHistory?.[1]?.score ?? null;
 
-  let health: { score: number; band: HealthBand; rationale: string } | null = null;
+  let health: {
+    score: number;
+    band: HealthBand;
+    rationale: string;
+    evidence: HealthEvidence;
+  } | null = null;
   if (data.found) {
     const h = computeHealthScore({
       // stageProgress not returned by lookupProspect (single-lookup path
@@ -47,8 +53,21 @@ export async function POST(req: NextRequest) {
       hasDealValue: data.dealAmount != null,
       hasPrimaryContact: !!data.contactName,
       engagementsLast30d: null,
+      // Rich evidence from the latest debrief — powers the "Why this
+      // score" panel in the detail card.
+      lastCallTone: briefing.lastCallTone,
+      lastCallSignals: briefing.lastCallSignals ?? [],
+      lastCallSummary: briefing.lastCallSummary,
+      lastCallPains: briefing.nextCallPrep?.painPoints ?? [],
+      lastCallRisks: briefing.lastCallRisks ?? [],
+      lastCallOpenQuestions: briefing.recentOpenQuestions ?? [],
     });
-    health = { score: h.score, band: h.band, rationale: h.rationale };
+    health = {
+      score: h.score,
+      band: h.band,
+      rationale: h.rationale,
+      evidence: h.evidence,
+    };
   }
 
   // Briefing is attached regardless of HubSpot outcome — a prospect can

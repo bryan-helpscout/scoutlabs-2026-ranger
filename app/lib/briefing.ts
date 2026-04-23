@@ -62,10 +62,19 @@ export interface ProspectBriefing {
   lastCallTone?: "positive" | "neutral" | "cautious" | "negative" | null;
   /** Last 5 close scores, newest first. */
   closeScoreHistory: BriefingScorePoint[];
+  /** Tone signals from the most recent debrief — these are the concrete
+   *  quotes/observations the system prompt instructs the model to produce
+   *  (e.g. `"asked three detailed questions about SAML setup"`). Used to
+   *  answer "what were they actually saying?" in the health panel. */
+  lastCallSignals: string[];
   /** Action items from recent calls, newest first, deduped by description. */
   openActionItems: BriefingActionItem[];
   /** Risks that appeared in 2+ recent calls (the ones worth re-raising). */
   recurringRisks: string[];
+  /** Risks from the SINGLE most recent call (not just recurring). These are
+   *  the per-call things-to-worry-about that may not have shown up twice
+   *  yet but matter for this score. */
+  lastCallRisks: string[];
   /** Open questions still unresolved across recent calls. */
   recentOpenQuestions: string[];
   /** Synthesized "here's where to focus the NEXT call" from the most recent
@@ -196,8 +205,12 @@ function briefFromRows(
     | {
         generatedAt?: string;
         summary?: string;
-        tone?: { overall?: ProspectBriefing["lastCallTone"] };
+        tone?: {
+          overall?: ProspectBriefing["lastCallTone"];
+          signals?: string[];
+        };
         nextCallPrep?: BriefingNextCallPrep;
+        risks?: string[];
       }
     | undefined;
 
@@ -231,8 +244,10 @@ function briefFromRows(
     lastCallSummary: latest?.summary ?? null,
     lastCallTone: latest?.tone?.overall ?? null,
     closeScoreHistory,
+    lastCallSignals: (latest?.tone?.signals ?? []).slice(0, 4),
     openActionItems,
     recurringRisks,
+    lastCallRisks: (latest?.risks ?? []).slice(0, 4),
     recentOpenQuestions,
     nextCallPrep,
     // prospectName is captured for future joins but not currently in the
@@ -362,8 +377,10 @@ const EMPTY_BRIEFING: ProspectBriefing = {
   lastCallSummary: null,
   lastCallTone: null,
   closeScoreHistory: [],
+  lastCallSignals: [],
   openActionItems: [],
   recurringRisks: [],
+  lastCallRisks: [],
   recentOpenQuestions: [],
 };
 

@@ -36,6 +36,48 @@ export interface HealthSignals {
   hasDealValue?: boolean;
   /** Present primary contact = discoverable decision path. */
   hasPrimaryContact?: boolean;
+  /** Most-recent debrief tone — source for the `evidence.sentiment` output. */
+  lastCallTone?: "positive" | "neutral" | "cautious" | "negative" | null;
+  /** Concrete quotes/observations from the most recent debrief's tone
+   *  signals (e.g. `"asked three detailed questions about SAML setup"`).
+   *  First 1–2 get surfaced as "what they're saying". */
+  lastCallSignals?: string[];
+  /** Summary from the most recent debrief — distilled "what happened". */
+  lastCallSummary?: string | null;
+  /** Pain points the prospect raised (surfaced on the last call). */
+  lastCallPains?: string[];
+  /** Risks logged against the last call — things that could kill the deal. */
+  lastCallRisks?: string[];
+  /** Still-open questions from recent calls. */
+  lastCallOpenQuestions?: string[];
+}
+
+/** One movement in the score breakdown — the UI shows these as up/down
+ *  arrows next to a short label so the AE can see at a glance *what
+ *  pushed the number*, not just what the number is. */
+export interface HealthContributor {
+  label: string;
+  direction: "up" | "down" | "flat";
+  /** Unsigned magnitude so the UI can scale the visual weight. */
+  weight: number;
+}
+
+/** Human-legible "why this score" payload. Populated entirely from inputs
+ *  the caller already has — no new LLM calls, no new round-trips. Designed
+ *  to render in a small stacked panel below the health pill. */
+export interface HealthEvidence {
+  /** Sentiment from the most-recent debrief (or null if no debrief). */
+  sentiment?: "positive" | "neutral" | "cautious" | "negative" | null;
+  /** 1–2 direct quotes/observations from the tone signals. */
+  prospectVoice: string[];
+  /** Pains raised on the last call. */
+  painPoints: string[];
+  /** Deal risks logged on the last call. */
+  risks: string[];
+  /** Questions the prospect has asked that are still open. */
+  openQuestions: string[];
+  /** Ordered list of what moved the score — strongest first. */
+  contributors: HealthContributor[];
 }
 
 export interface HealthScore {
@@ -53,6 +95,10 @@ export interface HealthScore {
     engagement: number;
     qualifiers: number;
   };
+  /** Rich "why this number" payload — quotes, pains, risks, contributors.
+   *  Populated when debrief signals are provided; fields can be empty
+   *  arrays when the data source has nothing to surface. */
+  evidence: HealthEvidence;
 }
 
 function bandFor(score: number): HealthBand {
@@ -147,10 +193,94 @@ export function computeHealthScore(signals: HealthSignals): HealthScore {
     rationale = "Limited signal — early-stage or stale";
   }
 
+  // ── Evidence — "why this number" ───────────────────────────────────────
+  // Build a contributor list so the UI can show arrows + labels next to
+  // the score. Sorted by absolute weight so the dominant signal leads.
+  const contributors: HealthContributor[] = [];
+  if (stage > 0) {
+    contributors.push({
+      label:
+        signals.stageProgress != null && signals.stageProgress >= 0.7
+          ? "Late-stage deal"
+          : signals.stageProgress != null && signals.stageProgress >= 0.4
+            ? "Mid-stage deal"
+            : "Early-stage deal",
+      direction: stage >= 15 ? "up" : "flat",
+      weight: stage,
+    });
+  }
+  if (recency > 0) {
+    contributors.push({
+      label:
+        days != null && days <= 7
+          ? "Very recent activity"
+          : days != null && days <= 14
+            ? "Recent activity"
+            : "Activity in last 30d",
+      direction: recency >= 18 ? "up" : "flat",
+      weight: recency,
+    });
+  } else if (days != null && days > 30) {
+    contributors.push({
+      label:
+        days > 60
+          ? `No activity in ${days} days`
+          : `Quiet ${days} days`,
+      direction: "down",
+      weight: Math.min(15, days - 20),
+    });
+  }
+  if (debriefTrend > 0 && signals.latestCloseScore != null) {
+    const trendLabel =
+      signals.previousCloseScore != null
+        ? signals.latestCloseScore - signals.previousCloseScore >= 10
+          ? `Close score trending up (${signals.previousCloseScore}→${signals.latestCloseScore})`
+          : signals.latestCloseScore - signals.previousCloseScore <= -10
+            ? `Close score trending down (${signals.previousCloseScore}→${signals.latestCloseScore})`
+            : `Ranger debrief ${signals.latestCloseScore}/100`
+        : `Ranger debrief ${signals.latestCloseScore}/100`;
+    contributors.push({
+      label: trendLabel,
+      direction:
+        signals.previousCloseScore != null &&
+        signals.latestCloseScore - signals.previousCloseScore <= -10
+          ? "down"
+          : debriefTrend >= 20
+            ? "up"
+            : "flat",
+      weight: debriefTrend,
+    });
+  }
+  if (engagement > 0) {
+    contributors.push({
+      label: "Engaged in the last 30 days",
+      direction: "up",
+      weight: engagement,
+    });
+  }
+  if ((signals.lastCallRisks?.length ?? 0) > 0) {
+    contributors.push({
+      label: `${signals.lastCallRisks!.length} open risk${signals.lastCallRisks!.length === 1 ? "" : "s"}`,
+      direction: "down",
+      weight: Math.min(10, signals.lastCallRisks!.length * 3),
+    });
+  }
+  contributors.sort((a, b) => b.weight - a.weight);
+
+  const evidence: HealthEvidence = {
+    sentiment: signals.lastCallTone ?? null,
+    prospectVoice: (signals.lastCallSignals ?? []).slice(0, 2),
+    painPoints: (signals.lastCallPains ?? []).slice(0, 3),
+    risks: (signals.lastCallRisks ?? []).slice(0, 3),
+    openQuestions: (signals.lastCallOpenQuestions ?? []).slice(0, 3),
+    contributors: contributors.slice(0, 5),
+  };
+
   return {
     score,
     band: bandFor(score),
     rationale,
     breakdown: { stage, recency, debriefTrend, engagement, qualifiers },
+    evidence,
   };
 }
