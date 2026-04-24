@@ -8,6 +8,7 @@
  *   /api/auth/*              — Auth.js own handlers
  *   /api/slack/command       — Slack HMAC signature verified inside the route
  *   /api/zoom/events         — Zoom HMAC signature verified inside the route
+ *   /api/fathom/webhook      — Fathom HMAC signature verified inside the route
  *   /api/transcript/ingest   — accepts either a valid session OR a matching
  *                              "Authorization: Bearer $RANGER_INGEST_TOKEN"
  *                              header (so the caption watcher can POST
@@ -35,6 +36,7 @@ export default auth((req) => {
     "/api/auth", // Auth.js sign-in/sign-out/callback/session endpoints
     "/api/slack/command", // Slack signing-secret verified inside
     "/api/zoom/events", // Zoom secret-token verified inside
+    "/api/fathom/webhook", // Fathom HMAC verified inside
   ];
   if (openRoutes.some((p) => path === p || path.startsWith(p + "/"))) return;
 
