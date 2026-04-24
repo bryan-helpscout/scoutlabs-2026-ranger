@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node --env-file=.env.local ./node_modules/.bin/next dev",
+    "dev": "node --env-file-if-exists=.env.local ./node_modules/.bin/next dev",
     "build": "next build",
-    "start": "node --env-file=.env.local ./node_modules/.bin/next start",
+    "start": "node --env-file-if-exists=.env.local ./node_modules/.bin/next start",
     "refresh-competitors": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/refresh-competitors.ts",
     "refresh-product-knowledge": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/refresh-product-knowledge.ts",
     "refresh-reddit-signals": "node --env-file-if-exists=.env.local --experimental-strip-types --no-warnings scripts/refresh-reddit-signals.ts",

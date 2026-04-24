@@ -1,0 +1,98 @@
+# Render blueprint for Ranger — one-click deploy from this repo.
+#
+# When you create a new service on Render and point it at this repo, Render
+# reads this file and auto-configures the service: runtime, build/start
+# commands, health check, and the env-var placeholders you'll fill in.
+#
+# Why Render instead of Vercel for this app:
+#   - Ranger's live-call pipeline (transcript store, SSE fanout, triage
+#     loop) depends on a single long-running Node process. Vercel runs
+#     each request in an ephemeral serverless function, which scatters
+#     state across invocations and breaks live cards.
+#   - Render's "Web Service" runtime is a persistent container — module-
+#     level Maps and EventEmitters work as designed. No Redis needed.
+#   - Zoom RTMS WebSocket sessions (if/when you enable them) also need
+#     this long-running model.
+#
+# Post-setup checklist (after the first deploy):
+#   1. Set the sync:false env vars in Render's dashboard (tokens/secrets).
+#   2. Update Google OAuth → Authorized redirect URIs with your Render URL.
+#   3. Update Fathom webhook URL → https://<render-url>/api/fathom/webhook
+#   4. Update Slack slash command URL (if using /ranger) → /api/slack/command
+#   5. In Vercel's Google OAuth app, leave the Vercel callback too so both
+#      hosts work during the cutover.
+
+services:
+  - type: web
+    name: ranger
+    runtime: node
+    # Starter is plenty for Ranger at usual load. Bump to Standard if
+    # you see cold starts or memory pressure once usage grows.
+    plan: starter
+    region: oregon
+    # Health check hits the root page. Both an authed user (redirects to
+    # /login, still 200 after the redirect) and an unauthed visitor get
+    # a 200 here, which is what Render wants to see.
+    healthCheckPath: /login
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    # Auto-deploy on push to main. Toggle off if you want manual promotes.
+    autoDeploy: true
+
+    envVars:
+      # ── Required ─────────────────────────────────────────────────────
+      - key: NODE_VERSION
+        value: "20"
+      - key: NODE_ENV
+        value: production
+
+      # Anthropic — the main model key. No Ranger feature works without it.
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+      # ── Google SSO (required for the UI to be reachable) ─────────────
+      # Protects all routes. Generate AUTH_SECRET with: openssl rand -base64 32
+      - key: AUTH_SECRET
+        sync: false
+      - key: AUTH_GOOGLE_ID
+        sync: false
+      - key: AUTH_GOOGLE_SECRET
+        sync: false
+      - key: AUTH_TRUST_HOST
+        value: "true"
+      - key: AUTH_ALLOWED_DOMAINS
+        value: "helpscout.com"
+
+      # ── HubSpot (Active Prospects list + pre-read briefs) ────────────
+      - key: HUBSPOT_TOKEN
+        sync: false
+
+      # ── Slack MCP + slash command ────────────────────────────────────
+      - key: SLACK_TOKEN
+        sync: false
+      - key: SLACK_SIGNING_SECRET
+        sync: false
+
+      # ── Linear MCP ───────────────────────────────────────────────────
+      - key: LINEAR_API_KEY
+        sync: false
+
+      # ── Fathom webhook (post-call debrief auto-generation) ───────────
+      - key: FATHOM_WEBHOOK_SECRET
+        sync: false
+      - key: INTERNAL_EMAIL_DOMAINS
+        value: "helpscout.com"
+
+      # ── Caption watcher shared secret ────────────────────────────────
+      # Same value on every AE's local .env.local so `npm run watch-zoom`
+      # authenticates to /api/transcript/ingest without needing a session.
+      - key: RANGER_INGEST_TOKEN
+        sync: false
+
+      # ── BigQuery persistence (optional) ──────────────────────────────
+      # Unset these = debriefs stay in local JSONL only, which is fine
+      # to start. Fill in when you're ready to populate the BQ table.
+      - key: BIGQUERY_PROJECT_ID
+        sync: false
+      - key: GOOGLE_APPLICATION_CREDENTIALS_JSON
+        sync: false
